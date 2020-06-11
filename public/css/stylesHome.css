@@ -1,0 +1,108 @@
+body {
+  font-family: "Montserrat";
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Montserrat";
+  font-weight: bold;
+}
+
+p {
+  color: #8f8f8f;
+}
+
+#title {
+  background-image: url("/images/tea.jpg");
+  background-size: cover;
+  height: 700px;
+}
+
+/* Headings */
+
+.big-heading {
+  font-size: 3.5rem;
+  line-height: 1.5;
+  font-weight: 900;
+}
+
+.section-heading {
+  font-size: 3rem;
+  line-height: 1.5;
+}
+
+.container-fluid {
+  padding: 3% 10% 7%;
+}
+
+#title {
+  background-color: #fff;
+  color: #f3f3f3;
+}
+
+/* Navigation Bar */
+
+.navbar {
+  padding: 0 16px;
+}
+
+.navbar-brand {
+  font-family: "Ubuntu";
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.nav-item {
+  padding: 0 18px;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  font-family: "Montserrat";
+  font-weight: 300;
+}
+
+/* Features Section  */
+#features {
+  padding: 7% 15%;
+  background-color: #fff;
+  position: relative;
+}
+
+.feature-title {
+  font-size: 1.5rem;
+}
+
+.feature-box {
+  text-align: center;
+  padding: 5%;
+}
+
+.icon {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.icon:hover {
+  color: #d3d3d3;
+}
+
+/* Footer Section */
+#footer {
+  background-color: #333;
+  padding: 7% 15%;
+  text-align: center;
+}
+
+.note {
+  padding-left: 16px;
+}
+
+.social-icon {
+  margin: 20px 10px;
+}
