@@ -8,6 +8,10 @@ const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = express();
 
+app.use(express.static("public"));
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({ extended: true }));
+
 /* KIV */
 app.use(
   session({
@@ -20,10 +24,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(express.static("public"));
-app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({ extended: true }));
-
 mongoose.connect("mongodb://localhost:27017/userDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -31,7 +31,7 @@ mongoose.connect("mongodb://localhost:27017/userDB", {
 mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
-  email: String,
+  username: String,
   password: String,
 });
 
@@ -64,6 +64,7 @@ app.post("/login", (req, res) => {
   req.login(user, function (err) {
     if (err) {
       console.log(err);
+      res.redirect("/login");
     } else {
       passport.authenticate("local")(req, res, () => {
         res.redirect("/menu");
@@ -87,16 +88,37 @@ app.post("/register", (req, res) => {
         console.log(err);
         res.redirect("/register");
       } else {
-        passport.authenticate("local")(req, resp, function () {
-          resp.redirect("/menu");
+        passport.authenticate("local")(req, res, () => {
+          res.redirect("/login");
         });
       }
     }
   );
 });
 
-/* KIV */
-// logout route
+// MENU route
+app.get("/menu", function (req, res) {
+  if (req.isAuthenticated()) {
+    const username = req.user.username;
+
+    res.render("menu", { currUser: username });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+// Forum route
+app.get("/forum", function (req, res) {
+  if (req.isAuthenticated()) {
+    const username = req.user.username;
+
+    res.render("forum", { currUser: username });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+// Logout route
 app.get("/logout", (req, res) => {
   req.logout();
   res.redirect("/");
@@ -104,16 +126,4 @@ app.get("/logout", (req, res) => {
 
 app.listen(3000, () => {
   console.log("Server started on port 3000");
-});
-
-// ------------------------------------------------------
-
-// Menu to be created soon KIV
-
-app.get("/menu", function (req, res) {
-  if (req.isAuthenticated()) {
-    res.render("menu");
-  } else {
-    res.redirect("/login");
-  }
 });
