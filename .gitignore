@@ -1,5 +1,8 @@
-#DSStore
+# DSStore
 .DS_Store
+
+# uploads
+uploads/
 
 # Logs
 logs
