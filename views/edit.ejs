@@ -1,0 +1,27 @@
+<%- include('partials/menuheader') %>
+
+<body>
+    <h2 class="post-title">Edit Drink</h2>
+    <hr>
+    <div class="container-fluid">
+        <form action="/drink/edit/<%=drinkID%>" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+
+                <label for="exampleFormControlFile1">Please attach an image of your drink *</label>
+                <input type="file" class="form-control-file" name="drinkIMG" id="drinkIMG" required>
+
+                <label for="exampleFormControlTextarea1"></label>
+                <textarea class="form-control" placeholder="Name of Drink" id="exampleFormControlTextarea1"
+                    name="drinkName" rows="1" required><%=drinkName%></textarea>
+                <label for="exampleFormControlTextarea1"></label>
+                <textarea class="form-control" placeholder="Drink Description" id="exampleFormControlTextarea1"
+                    name="drinkDescription" rows="6" required><%=drinkDescription%></textarea>
+            </div>
+            <a href="/shops/<%= shopID %>" class="btn btn-secondary btn-lg col-lg4">Cancel</a>
+            <button type="submit" class="btn btn-primary btn-lg col-lg4">Post</button>
+        </form>
+
+
+
+    </div>
+    <%- include('partials/footer') %>

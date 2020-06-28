@@ -1,0 +1,95 @@
+<%- include('partials/menuheader') %>
+
+<body>
+
+
+
+    <main role="main">
+
+        <!-- <section id="testimonials">
+
+            <div id="testimonial-carousel" class="carousel slide" data-ride="false">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <h2 class="testimonial-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                            eiusmod
+                            tempor incididunt.</h2>
+                        <button type="button" class="btn btn-secondary">Learn More</button>
+                    </div>
+                    <div class="carousel-item">
+                        <h2 class="testimonial-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                            eiusmod
+                            tempor incididunt.</h2>
+                        <button type="button" class="btn btn-secondary">Learn More</button>
+                    </div>
+
+                </div>
+                <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </a>
+                <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </a>
+            </div>
+
+        </section> -->
+
+        <section class="jumbotron text-center">
+            <div class="container">
+                <h1>Promotions</h1>
+                <p class="lead text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p> <% if (user.equals(shop._id)) { %>
+                    <a href="/login" class="btn btn-lg btn-primary my-2">Visit our site</a>
+                    <% } %>
+                    <% if (user.equals(shop._id)) { %>
+                    <a href="/upload" class="btn btn-lg btn-primary my-2" style="margin: 0 0 0 0">
+                        Add a New Drink!
+                    </a>
+                    <% } %>
+                </p>
+            </div>
+        </section>
+
+        <div class="album py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    <% drinks.forEach(drink => { %>
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <img src="/<%= drink.drinkImage %>" class="card-img-top" alt="brands">
+                            <div class="card-body">
+
+                                <p class="card-text"><%= drink.drinkDescription.substring(0,100) + " ... " %></p>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="/drinks/<%= drink._id%>"
+                                            class="btn btn-sm btn-outline-secondary">View</a>
+
+                                        <% if (user.equals(drink.userID)) {%>
+                                        <a href="/drink/edit/<%= drink._id %>"
+                                            class="btn btn-sm btn-outline-secondary">Edit</a>
+                                        <a href="#" data-ID="<%= drink._id %>" data-shopID="<%= drink.userID %>"
+                                            class="btn btn-sm btn-outline-secondary delete-drink">Delete</a>
+                                        <% } %>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <!-- Google's Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Self created JS -->
+    <script src="/js/main.js"></script>
+
+    <%- include('partials/footer') %>

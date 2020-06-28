@@ -1,0 +1,125 @@
+<%- include('partials/menuheader') %>
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+
+<body class="profile-body">
+    <div class="main-content">
+        <div class="container mt-7" style="margin-top: 3%;">
+            <!-- Table -->
+            <!-- <h2 class="mb-5">My Account Card</h2> -->
+            <form action="profile/<%=user._id%>" method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-xl-8 m-auto order-xl-1">
+                        <div class="card bg-light shadow">
+                            <div class="card-header bg-white border-0">
+                                <div class="row align-items-center">
+                                    <div class="col-8">
+                                        <h3 class="mb-0">My account</h3>
+                                    </div>
+                                    <div class="col-4 text-right">
+                                        <a href="/logout" class="btn btn-sm btn-outline-dark">Logout</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <h6 class="heading-small text-muted mb-4">User information</h6>
+                                    <div class="pl-lg-4">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group focused">
+                                                    <label class="form-control-label"
+                                                        for="input-username">Username</label>
+                                                    <input type="text" id="input-username"
+                                                        class="form-control form-control-alternative"
+                                                        placeholder="Username" value="<%=user.username%>" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label class="form-control-label" for="input-email">Email
+                                                        address</label>
+                                                    <input type="email" id="input-email" name="email"
+                                                        class="form-control form-control-alternative"
+                                                        placeholder="jesse@example.com" value="<%=user.email%>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group focused">
+                                                    <label class="form-control-label" for="input-first-name">First
+                                                        name</label>
+                                                    <input type="text" id="input-first-name" name="firstName"
+                                                        class="form-control form-control-alternative"
+                                                        placeholder="First name" value="<%=user.firstName%>">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group focused">
+                                                    <label class="form-control-label" for="input-last-name">Last
+                                                        name</label>
+                                                    <input type="text" id="input-last-name" name="lastName"
+                                                        class="form-control form-control-alternative"
+                                                        placeholder="Last name" value="<%=user.lastName%>">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                    <hr class="my-4">
+                                    <!-- Address -->
+                                    <h6 class="heading-small text-muted mb-4">User Avatar</h6>
+                                    <div class="pl-lg-4">
+                                        <div class="row">
+
+                                            <div class="col-xs-5">
+                                                <!-- <div class="card mb-4 shadow-sm"> -->
+                                                <img src="/<%= user.userImage %>" class="card-img-top profile-pic"
+                                                    alt="">
+                                                <!-- <input type="file" class="form-control-file" name="userImage" id="userImage"> -->
+                                                <!-- </div> -->
+                                            </div>
+                                            <div class="col-xs-5 chooseFileCol">
+                                                <p> Update your user avatar</p>
+                                                <input type="file" class="form-control-file avatar-choose"
+                                                    name="userImage" id="userImage">
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <hr class="my-4">
+                                    <!-- Description -->
+                                    <h6 class="heading-small text-muted mb-4">About me</h6>
+                                    <div class="pl-lg-4">
+                                        <div class="form-group focused">
+                                            <label>About Me</label>
+                                            <textarea rows="4" class="form-control form-control-alternative"
+                                                placeholder="A few words about you ..."
+                                                name="aboutMe"><%= user.aboutMe %></textarea>
+                                            <button class="btn mt-4 btn-outline-dark update-info-btn" type="submit"
+                                                name="button">Update User Info</button>
+                                        </div>
+                                        <!-- btn btn-outline-light btn-lg download-button -->
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="row align-items-center justify-content-xl-between">
+            <div class="col-xl-6 m-auto text-center">
+                <div class="copyright">
+
+                </div>
+                </form>
+            </div>
+        </div>
+    </footer>
+</body>
+
+<%- include('partials/footer') %>

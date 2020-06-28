@@ -9,7 +9,7 @@ body {
   margin: 7%;
 }
 .login-container {
-  height: 100vh;
+  margin-top: 100px;
   width: 100%;
 }
 .login-form {

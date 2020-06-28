@@ -1,0 +1,127 @@
+<%- include('partials/menuheader') %>
+
+<div class="container post-page">
+
+    <div class="row">
+        <h2><%=post.title%></h2>
+        <% if (user._id == post.userID) { %>
+        <a href="/post-title-content/edit/<%= post._id %>"><i class="option fa fa-edit fa-2x ml-4"
+                title="Edit Post"></i></a>
+        <a href="#"><i data-mainPostID="<%=post._id%>" class="option delete-post fa fa-trash-alt fa-2x"
+                title="Delete Post"></i></a>
+        <% } %>
+    </div>
+    <p><%=post.content%></p>
+
+</div>
+
+<hr>
+
+<div class="container">
+
+    <form class="compose-form" action="/posts/<%=post._id%>" method="post">
+
+        <div class="form-group">
+            <label>Add a comment</label>
+            <textarea class="form-control" name="comment" rows="2" cols="20" required></textarea>
+        </div>
+
+        <button class="btn btn-primary" type="submit" name="button">Comment</button>
+    </form>
+
+</div>
+
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="comments-container">
+
+            <h1>Comments</h1>
+            <ul id="comments-list" class="comments-list">
+
+                <% comments.forEach((comment) => { %>
+
+                <li>
+                    <div class="comment-main-level">
+                        <!-- Avatar -->
+                        <% var imageSource = "/" + user.userImage; %>
+                        <% users.forEach(function(commentor) { %>
+                        <%  if (commentor._id == comment.userID) { %>
+                        <%    imageSource = "/" + commentor.userImage; %>
+                        <% } %>
+                        <% }) %>
+                        <div class="comment-avatar"><img src=<%=imageSource%> alt=""></div>
+                        <div class="comment-box">
+                            <div class="comment-head">
+                                <% if (comment.userID === post.userID) { %>
+                                <h6 class="comment-name by-author"><%=comment.username%></h6>
+                                <% } else { %>
+                                <h6 class="comment-name"><%=comment.username%></h6>
+                                <% } %>
+                                <span><%= duration(comment) %></span>
+                                <% if (comment.userID == user._id) { %>
+                                <a><i data-commentID="<%= comment._id %>" data-postID="<%= comment.parentID %>"
+                                        class="fa fa-trash-alt delete-comment" title="Delete"></i></a>
+
+                                <a><i data-toggle="modal" data-target="#exampleModal" data-editID="<%= comment._id %>"
+                                        class="fa edit-comment fa-edit" title="Edit"></i></a>
+
+                                <% } %>
+                                <% if (comment.userID != user._id) { %>
+                                <a href=""><i class="fa fa-reply" title="Reply"></i></a>
+                                <% } %>
+                                <a href=""><i class="fa fa-heart" title="Like"></i></a>
+                            </div>
+                            <div class="comment-content">
+                                <p><%=comment.content%></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% }) %>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit comment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form id="popOutForm" action="/post/comment/edit/" method="POST">
+
+                    <div class="form-group" style="margin: 0 0 0 0;">
+                        <label for="message-text" class="col-form-label">Edit your
+                            comment</label>
+
+                        <textarea rows="3" class="form-control" name="editedContent" id="message-text"
+                            required></textarea>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Modal End -->
+
+<!-- Google's Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Self created JS -->
+<script src="/js/main.js"></script>
+<%- include('partials/footer') %>
