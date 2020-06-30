@@ -1,5 +1,9 @@
 <%- include('partials/menuheader') %>
-
+<% if (message.length > 0) { %>
+<div class="alert alert-success" role="alert">
+    <%= message %>
+</div>
+<% } %>
 <a href="/compose" class="btn btn-outline-dark btn-lg btn-block" style="margin: 20px 0 0 0">
     Start a new thread!
 </a>

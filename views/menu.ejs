@@ -1,10 +1,14 @@
 <%- include('partials/menuheader') %>
 
 <!-- similar to a home page -->
+<% if (message.length > 0) { %>
+<div class="alert alert-success" role="alert" style="margin-bottom: 0px;">
+    <%= message %>
+</div>
+<% } %>
 
 <body>
     <section id="title">
-
         <!-- Cover -->
         <div class="container-fluid">
             <div class="row">

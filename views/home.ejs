@@ -1,5 +1,10 @@
 <%- include('partials/header') %>
 <link rel="stylesheet" href="css/stylesHome.css">
+<% if (message.length > 0) { %>
+<div class="alert alert-primary" role="alert" style="margin-bottom: 0px;">
+    <%= message %>
+</div>
+<% } %>
 </head>
 
 

@@ -6,6 +6,7 @@ const ejs = require("ejs");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
+const flash = require("connect-flash");
 const multer = require("multer");
 
 /**************  Required npms **************/
@@ -64,6 +65,10 @@ app.use(
   })
 );
 
+// connect-flash middleware
+app.use(flash());
+
+// passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -145,7 +150,7 @@ const Drink = new mongoose.model("Drink", drinkSchema);
 /**************  home page routing **************/
 
 app.get("/", (req, res) => {
-  res.render("home");
+  res.render("home", { message: req.flash("message") });
 });
 
 /**************  home page routing **************/
@@ -154,7 +159,10 @@ app.get("/", (req, res) => {
 
 // login "GET" route
 app.get("/login", (req, res) => {
-  res.render("login");
+  res.render("login", {
+    message: req.flash("message"),
+    error: req.flash("error"),
+  });
 });
 
 // login "POST" route
@@ -177,6 +185,7 @@ app.post("/login", (req, res) => {
       res.redirect("/login");
     } else {
       passport.authenticate("local")(req, res, () => {
+        req.flash("message", "Signed in successfully.");
         res.redirect("/menu");
       });
     }
@@ -189,7 +198,7 @@ app.post("/login", (req, res) => {
 
 // registration "GET"  route
 app.get("/register", (req, res) => {
-  res.render("register");
+  res.render("register", { message: req.flash("message") });
 });
 
 // registration "POST" route
@@ -200,9 +209,11 @@ app.post("/register", (req, res) => {
     (err, user) => {
       if (err) {
         console.log(err);
+        req.flash("message", "User exists, please try again.");
         res.redirect("/register");
       } else {
         passport.authenticate("local")(req, res, () => {
+          req.flash("message", "Registered Successfully.");
           res.redirect("/login");
         });
       }
@@ -218,8 +229,12 @@ app.post("/register", (req, res) => {
 app.get("/menu", (req, res) => {
   if (req.isAuthenticated()) {
     const username = req.user.username;
-    res.render("menu", { currUser: username });
+    res.render("menu", {
+      currUser: username,
+      message: req.flash("message"),
+    });
   } else {
+    req.flash("error", "Please login to view.");
     res.redirect("/login");
   }
 });
@@ -237,6 +252,7 @@ app.get("/browse", (req, res) => {
       });
     });
   } else {
+    req.flash("error", "Please login to view");
     res.redirect("/login");
   }
 });
@@ -303,9 +319,11 @@ app.get("/forum", (req, res) => {
       res.render("forum", {
         posts: posts,
         duration: duration,
+        message: req.flash("message"),
       });
     });
   } else {
+    req.flash("error", "Please login to view");
     res.redirect("/login");
   }
 });
@@ -369,6 +387,7 @@ app.post("/compose", (req, res) => {
 
   post.save((err) => {
     if (!err) {
+      req.flash("message", "You have created a post");
       res.redirect("/forum");
     }
   });
@@ -404,6 +423,7 @@ app.post("/upload", upload.single("drinkIMG"), (req, res) => {
 
   drink.save((err) => {
     if (!err) {
+      req.flash("message", "You have uploaded a drink");
       res.redirect("/shops/" + shopID);
     }
   });
@@ -423,6 +443,7 @@ app.get("/shops/:shopId", (req, res) => {
           shop: shop,
           drinks: drinks,
           user: currUser,
+          message: req.flash("message"),
         });
       });
     });
@@ -449,6 +470,7 @@ app.get("/drinks/:drinkId", (req, res) => {
             duration: duration,
             user: req.user,
             users: users,
+            message: req.flash("message"),
           });
         });
       });
@@ -490,6 +512,7 @@ app.get("/posts/:postId", (req, res) => {
             duration: duration,
             user: req.user,
             users: users,
+            message: req.flash("message"),
           });
         });
       });
@@ -549,6 +572,7 @@ app.post("/drink/edit/:drinkID", upload.single("drinkIMG"), (req, res) => {
     if (err) {
       console.log(err);
     } else {
+      req.flash("message", "Edited successfully.");
       res.redirect("/shops/" + drink.userID);
     }
   });
@@ -570,6 +594,7 @@ app.post("/drink/comment/edit/:commentID", (req, res) => {
         if (err) {
           console.log(err);
         } else {
+          req.flash("message", "Comment edited");
           res.redirect("/drinks/" + post.parentID);
         }
       });
@@ -606,6 +631,7 @@ app.post("/post-title-content/edit/:postID", (req, res) => {
     if (err) {
       console.log(err);
     } else {
+      req.flash("message", "Post edited successfully.");
       res.redirect("/forum");
     }
   });
@@ -628,6 +654,7 @@ app.post("/post/comment/edit/:commentID", (req, res) => {
         if (err) {
           console.log(err);
         } else {
+          req.flash("message", "Comment edited");
           res.redirect("/posts/" + post.parentID);
         }
       });
@@ -746,6 +773,7 @@ function duration(a) {
 // Logout route
 app.get("/logout", (req, res) => {
   req.logout();
+  req.flash("message", "Signed out successfully.");
   res.redirect("/");
 });
 

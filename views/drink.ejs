@@ -1,4 +1,9 @@
 <%- include('partials/menuheader') %>
+<% if (message.length > 0) { %>
+<div class="alert alert-primary" role="alert" style="margin-bottom: 0px;">
+    <%= message %>
+</div>
+<% } %>
 
 <div class="container post-page">
     <div class="card mb-3 border-0" style="max-width: 1140px;">
