@@ -1,6 +1,11 @@
 <%- include('partials/menuheader') %>
 
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+<% if (message.length > 0) { %>
+<div class="alert alert-success" role="alert" style="margin-bottom: 0px;">
+    <%= message %>
+</div>
+<% } %>
 
 <body class="profile-body">
     <div class="main-content">
@@ -99,7 +104,8 @@
                                                 placeholder="A few words about you ..."
                                                 name="aboutMe"><%= user.aboutMe %></textarea>
                                             <button class="btn mt-4 btn-outline-dark update-info-btn" type="submit"
-                                                name="button">Update User Info</button>
+                                                name="button">Update
+                                                User Info</button>
                                         </div>
                                         <!-- btn btn-outline-light btn-lg download-button -->
                                     </div>
