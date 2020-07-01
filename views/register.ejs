@@ -4,6 +4,10 @@
 <div class="alert alert-danger" role="alert" style="margin-bottom: 0px;">
     <%= message %>
 </div>
+<% } else if (error.length > 0) { %>
+<div class="alert alert-danger" role="alert" style="margin-bottom: 0px;">
+    <%= error %>
+</div>
 <% } %>
 </head>
 
@@ -17,21 +21,21 @@
                 <p>Please fill in this form to create an account.</p>
                 <div class="form-group">
                     <input type="text" class="form-control rounded-pill form-control-lg" placeholder="Username"
-                        name="username">
+                        name="username" required>
                 </div>
                 <!--we need to delete later -->
                 <div class="form-group">
                     <input type="text" class="form-control rounded-pill form-control-lg" placeholder="Email"
-                        name="email">
+                        name="email" required>
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control rounded-pill form-control-lg" placeholder="Password"
-                        name="password">
+                        name="password" required>
                 </div>
                 <!-- we can delete later-->
                 <div class="form-group">
                     <input type="password" class="form-control rounded-pill form-control-lg"
-                        placeholder="Repeat Password" name="repeat-password">
+                        placeholder="Repeat Password" name="repeat-password" required>
                 </div>
                 <div class="forgot-link form-group d-flex justify-content-between align-items-center">
                 </div>

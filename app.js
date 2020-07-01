@@ -166,31 +166,41 @@ app.get("/login", (req, res) => {
 });
 
 // login "POST" route
-app.post("/login", (req, res) => {
-  const user = new User({
-    username: req.body.username,
-    password: req.body.password,
-  });
+// app.post("/login", (req, res) => {
+//   const user = new User({
+//     username: req.body.username,
+//     password: req.body.password,
+//   });
 
-  // if no such username -> redirect user to registration page and register
-  User.findOne({ username: req.body.username }, (err, user) => {
-    if (user === null) {
-      res.redirect("/register");
-    }
-  });
+//   // if no such username -> redirect user to registration page and register
+//   User.findOne({ username: req.body.username }, (err, user) => {
+//     if (user === null) {
+//       req.flash("error", "No such user, please register.");
+//       res.redirect("/register");
+//     }
+//   });
 
-  req.login(user, (err) => {
-    if (err) {
-      console.log(err);
-      res.redirect("/login");
-    } else {
-      passport.authenticate("local")(req, res, () => {
-        req.flash("message", "Signed in successfully.");
-        res.redirect("/menu");
-      });
-    }
-  });
-});
+//   req.login(user, (err) => {
+//     if (err) {
+//       console.log(err);
+//       res.redirect("/login");
+//     } else {
+//       passport.authenticate("local")(req, res, () => {
+//         req.flash("message", "Signed in successfully.");
+//         res.redirect("/menu");
+//       });
+//     }
+//   });
+// });
+
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/menu",
+    failureRedirect: "/login", // see text
+    failureFlash: true, // optional, see text as well
+  })
+);
 
 /**************  login page routings **************/
 
@@ -198,7 +208,10 @@ app.post("/login", (req, res) => {
 
 // registration "GET"  route
 app.get("/register", (req, res) => {
-  res.render("register", { message: req.flash("message") });
+  res.render("register", {
+    message: req.flash("message"),
+    error: req.flash("error"),
+  });
 });
 
 // registration "POST" route
@@ -270,6 +283,7 @@ app.get("/search", (req, res) => {
       });
     });
   } else {
+    req.flash("error", "Please login to search.");
     res.redirect("/login");
   }
 });
@@ -287,6 +301,7 @@ app.get("/browse/establishments", (req, res) => {
       });
     });
   } else {
+    req.flash("error", "Please login to view.");
     res.redirect("/login");
   }
 });
@@ -300,6 +315,7 @@ app.get("/browse/users", (req, res) => {
       });
     });
   } else {
+    req.flash("error", "Please login to view.");
     res.redirect("/login");
   }
 });
@@ -337,8 +353,10 @@ app.get("/profile", (req, res) => {
   if (req.isAuthenticated()) {
     res.render("profile", {
       user: req.user,
+      message: req.flash("message"),
     });
   } else {
+    req.flash("error", "Please login to view.");
     res.redirect("/login");
   }
 });
@@ -355,6 +373,7 @@ app.post("/profile/:userId", upload.single("userImage"), (req, res) => {
         user.userImage = req.file.path;
       }
       user.save();
+      req.flash("message", "User information updated.");
       res.redirect("/profile");
     }
   });
@@ -369,6 +388,7 @@ app.get("/compose", (req, res) => {
   if (req.isAuthenticated()) {
     res.render("compose");
   } else {
+    req.flash("error", "Please login to post.");
     res.redirect("/login");
   }
 });
@@ -402,6 +422,7 @@ app.get("/upload", (req, res) => {
   if (req.isAuthenticated()) {
     res.render("upload", { userID: req.user._id });
   } else {
+    req.flash("error", "Please login to post.");
     res.redirect("/login");
   }
 });
@@ -448,6 +469,7 @@ app.get("/shops/:shopId", (req, res) => {
       });
     });
   } else {
+    req.flash("error", "Please login to view.");
     res.redirect("/login");
   }
 });
@@ -476,6 +498,7 @@ app.get("/drinks/:drinkId", (req, res) => {
       });
     });
   } else {
+    req.flash("error", "Please login to view.");
     res.redirect("/login");
   }
 });
@@ -518,6 +541,7 @@ app.get("/posts/:postId", (req, res) => {
       });
     });
   } else {
+    req.flash("error", "Please login to view.");
     res.redirect("/login");
   }
 });
@@ -552,6 +576,7 @@ app.get("/drink/edit/:drinkID", (req, res) => {
       });
     });
   } else {
+    req.flash("error", "Please login to edit.");
     res.redirect("/login");
   }
 });
@@ -616,6 +641,7 @@ app.get("/post-title-content/edit/:postID", (req, res) => {
       });
     });
   } else {
+    req.flash("error", "Please login to edit.");
     res.redirect("/login");
   }
 });

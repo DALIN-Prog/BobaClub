@@ -7,6 +7,9 @@ $(document).ready(() => {
     $.ajax({
       type: "DELETE",
       url: "/shop/drinks/" + id,
+      beforeSend: () => {
+        return confirm("Are you sure?");
+      },
       success: (response) => {
         alert("Deleting Drink post");
         window.location.href = "/shops/" + userID;
@@ -37,6 +40,9 @@ $(document).ready(() => {
     $.ajax({
       type: "DELETE",
       url: "/forum/posts/" + id,
+      beforeSend: () => {
+        return confirm("Are you sure?");
+      },
       success: (response) => {
         alert("Deleting post");
         window.location.href = "/forum";
@@ -67,6 +73,9 @@ $(document).ready(() => {
     $.ajax({
       type: "DELETE",
       url: "/post/comments/" + id,
+      beforeSend: () => {
+        return confirm("Are you sure?");
+      },
       success: (response) => {
         alert("Deleting post comment");
         window.location.href = "/posts/" + userID;
@@ -87,6 +96,9 @@ $(document).ready(() => {
     $.ajax({
       type: "DELETE",
       url: "/drink/comments/" + id,
+      beforeSend: () => {
+        return confirm("Are you sure?");
+      },
       success: (response) => {
         alert("Deleting drink comment");
         window.location.href = "/drinks/" + userID;
@@ -116,10 +128,12 @@ function sortTableByColumn(table, column, asc = true) {
   const sortedRows = rows.sort((a, b) => {
     const aColText = a
       .querySelector(`td:nth-child(${column + 1})`)
-      .textContent.trim();
+      .textContent.trim()
+      .toLowerCase();
     const bColText = b
       .querySelector(`td:nth-child(${column + 1})`)
-      .textContent.trim();
+      .textContent.trim()
+      .toLowerCase();
 
     return aColText > bColText ? 1 * dirModifier : -1 * dirModifier;
   });
