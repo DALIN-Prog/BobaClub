@@ -381,6 +381,19 @@ app.post("/profile/:userId", upload.single("userImage"), (req, res) => {
 
 /**************  profile routings **************/
 
+/**************  favourites routings **************/
+
+app.get("/favourites", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.render("favourites");
+  } else {
+    req.flash("error", "Please login to view.");
+    res.redirect("/login");
+  }
+});
+
+/**************  favourites routings **************/
+
 /**************  compose page routings **************/
 
 // compose "GET" route
