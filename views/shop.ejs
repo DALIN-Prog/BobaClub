@@ -63,10 +63,11 @@
                     <% drinks.forEach(drink => { %>
                     <div class="col-md-4">
                         <div class="card mb-4 shadow-sm">
+
                             <img src="/<%= drink.drinkImage %>" class="card-img-top" alt="brands">
                             <div class="card-body">
 
-                                <p class="card-text"><%= drink.drinkDescription.substring(0,100) + " ... " %></p>
+                                <p class="card-text"><%= drink.drinkName %></p>
 
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
@@ -79,8 +80,27 @@
                                         <a href="#" data-ID="<%= drink._id %>" data-shopID="<%= drink.userID %>"
                                             class="btn btn-sm btn-outline-secondary delete-drink">Delete</a>
                                         <% } %>
+                                        <!-- Favourite Drink -->
+                                        <!-- If post does not belong to current user -->
+                                        <!-- If not favourite yet -> render favourite button -->
+                                        <% if ((!user.equals(drink.userID)) && (!drink.favouriters.includes(user._id))) { %>
+                                        <button id="<%=drink._id%>" data-fav="<%=drink._id%>"
+                                            class="btn btn-sm btn-outline-secondary" onclick="doFavDrink(this.id)"
+                                            title="Wishlist">
+                                            Wishlist <i class="far fa-heart"></i>
+                                        </button>
+                                        <% } %>
+                                        <% if ((!user.equals(drink.userID)) && (drink.favouriters.includes(user._id))) { %>
 
+                                        <!-- Else -> render unfavourite button -->
+                                        <button id="<%=drink._id%>" data-fav="<%=drink._id%>"
+                                            class="btn btn-sm btn-outline-secondary" onclick="doUnFavDrink(this.id)"
+                                            title="Unwishlist">
+                                            Wishlisted <i class="fas fa-heart" style="color: #ec5252;"></i>
+                                        </button>
+                                        <% } %>
                                     </div>
+
 
                                 </div>
                             </div>

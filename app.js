@@ -80,6 +80,7 @@ mongoose.connect("mongodb://localhost:27017/userDB", {
   // creating a database called 'userDB' at localhost:27017
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 });
 
 mongoose.set("useCreateIndex", true);
@@ -124,6 +125,7 @@ const postSchema = {
   date: Number,
   parentID: String,
   userID: String,
+  likers: [{ type: String }],
 };
 
 // Post model
@@ -139,11 +141,36 @@ const drinkSchema = new mongoose.Schema({
   drinkName: String,
   drinkDescription: String,
   date: Number,
+  favouriters: [{ type: String }],
 });
 
 const Drink = new mongoose.model("Drink", drinkSchema);
 
 /**************  Schema(drinkSchema) setup **************/
+
+/**************  Schema(favouriteSchema) setup **************/
+
+const favouriteSchema = new mongoose.Schema({
+  // favourite schema for drink
+  userID: String,
+  drinkID: String,
+  postID: String, // Remove
+});
+
+const Favourite = new mongoose.model("Favourite", favouriteSchema);
+/**************  Schema(favouriteSchema) setup **************/
+
+/**************  Schema(likeSchema) setup **************/
+
+const likeSchema = new mongoose.Schema({
+  // like schema for post
+  userID: String,
+  drinkID: String,
+  postID: String,
+});
+
+const Like = new mongoose.model("Like", likeSchema);
+/**************  Schema(likeSchema) setup **************/
 
 /****************************************  Routings START ****************************************/
 
@@ -499,14 +526,20 @@ app.get("/drinks/:drinkId", (req, res) => {
     Post.find({ parentID: reqDrinkId }, (err, comments) => {
       Drink.findOne({ _id: reqDrinkId }, (err, drink) => {
         User.find({}, (err, users) => {
-          res.render("drink", {
-            drink: drink,
-            comments: comments,
-            duration: duration,
-            user: req.user,
-            users: users,
-            message: req.flash("message"),
-          });
+          Favourite.findOne(
+            { userID: req.user._id, drinkID: reqDrinkId },
+            (err, favouriteDrink) => {
+              res.render("drink", {
+                drink: drink,
+                comments: comments,
+                duration: duration,
+                user: req.user,
+                users: users,
+                message: req.flash("message"),
+                favouriteDrink: favouriteDrink,
+              });
+            }
+          );
         });
       });
     });
@@ -537,18 +570,23 @@ app.post("/drinks/:drinkId", (req, res) => {
 // individual post "GET" route
 app.get("/posts/:postId", (req, res) => {
   if (req.isAuthenticated()) {
-    const requestedPostId = req.params.postId;
+    const postId = req.params.postId;
+    const userId = req.user._id;
+    const queryfav = { userID: userId, postID: postId };
 
-    Post.find({ parentID: req.params.postId }, (err, comments) => {
-      Post.findOne({ _id: requestedPostId }, (err, post) => {
+    Post.find({ parentID: postId }, (err, comments) => {
+      Post.findOne({ _id: postId }, (err, post) => {
         User.find({}, (err, users) => {
-          res.render("post", {
-            post: post,
-            comments: comments,
-            duration: duration,
-            user: req.user,
-            users: users,
-            message: req.flash("message"),
+          Favourite.findOne(queryfav, (err, favouritePost) => {
+            res.render("post", {
+              post: post,
+              comments: comments,
+              duration: duration,
+              user: req.user,
+              users: users,
+              message: req.flash("message"),
+              favouritePost: favouritePost,
+            });
           });
         });
       });
@@ -574,6 +612,111 @@ app.post("/posts/:postId", (req, res) => {
 });
 
 /**************  individual post routings **************/
+
+/**************  post favourite/unfavourite routings **************/
+
+app.post("/doFavourite/:postID", (req, res) => {
+  const userID = req.user._id;
+  const postID = req.params.postID;
+
+  const favourite = new Favourite({
+    userID: userID,
+    postID: postID,
+    //drinkID: KIV
+  });
+  favourite.save((err) => {
+    if (!err) {
+      //req.flash("message", "Added to favourites");
+      res.send("Success");
+    }
+  });
+});
+
+app.post("/doUnfavourite/:postID", (req, res) => {
+  Favourite.deleteOne(
+    { userID: req.user._id, postID: req.params.postID },
+    (err) => {
+      if (!err) {
+        //req.flash("message", "Removed from favourites");
+        res.send("Success");
+      }
+    }
+  );
+});
+
+/**************  post favourite/unfavourite routings **************/
+
+/**************  post like/unlike routings **************/
+
+app.post("/doLike/:postID", (req, res) => {
+  const userID = req.user._id;
+  const postID = req.params.postID;
+
+  Post.findOneAndUpdate(
+    { _id: postID },
+    { $push: { likers: userID } },
+    (err, post) => {
+      if (!err) {
+        console.log(post);
+        res.send("Success");
+      }
+    }
+  );
+});
+
+app.post("/doUnlike/:postID", (req, res) => {
+  const userID = req.user._id;
+  const postID = req.params.postID;
+
+  Post.findOneAndUpdate(
+    { _id: postID },
+    { $pull: { likers: userID } },
+    (err, post) => {
+      if (!err) {
+        console.log(post);
+        res.send("Success");
+      }
+    }
+  );
+});
+
+/**************  post like/unlike routings **************/
+
+/**************  drink favourite/unfavourite routings **************/
+
+app.post("/drink/favourite/:drinkID", (req, res) => {
+  const userID = req.user._id;
+  const drinkID = req.params.drinkID;
+
+  Drink.findOneAndUpdate(
+    { _id: drinkID },
+    { $push: { favouriters: userID } },
+    (err, drink) => {
+      if (!err) {
+        console.log(drink);
+        res.send("Success");
+      }
+    }
+  );
+});
+
+app.post("/drink/unfavourite/:drinkID", (req, res) => {
+  const userID = req.user._id;
+  const drinkID = req.params.drinkID;
+
+  Drink.findOneAndUpdate(
+    { _id: drinkID },
+    { $pull: { favouriters: userID } },
+    (err, drink) => {
+      if (!err) {
+        console.log(drink);
+        res.send("Success");
+      }
+    }
+  );
+});
+
+/**************  drink favourite/unfavourite routings **************/
 
 /**************  edit drink routings **************/
 

@@ -11,7 +11,6 @@ $(document).ready(() => {
         return confirm("Are you sure?");
       },
       success: (response) => {
-        alert("Deleting Drink post");
         window.location.href = "/shops/" + userID;
       },
       error: (err) => {
@@ -44,7 +43,6 @@ $(document).ready(() => {
         return confirm("Are you sure?");
       },
       success: (response) => {
-        alert("Deleting post");
         window.location.href = "/forum";
       },
       error: (err) => {
@@ -77,7 +75,6 @@ $(document).ready(() => {
         return confirm("Are you sure?");
       },
       success: (response) => {
-        alert("Deleting post comment");
         window.location.href = "/posts/" + userID;
       },
       error: (err) => {
@@ -100,7 +97,6 @@ $(document).ready(() => {
         return confirm("Are you sure?");
       },
       success: (response) => {
-        alert("Deleting drink comment");
         window.location.href = "/drinks/" + userID;
       },
       error: (err) => {
@@ -109,6 +105,232 @@ $(document).ready(() => {
     });
   });
 });
+
+// favourite post
+function doFav() {
+  $(document).ready(() => {
+    var x = document.getElementById("fav");
+    const id = x.getAttribute("data-fav");
+    console.log("This is: " + (x.innerHTML === "Favourite"));
+    if (x.innerHTML === "Favourite") {
+      $.ajax({
+        type: "POST",
+        url: "/doFavourite/" + id,
+        success: (response) => {
+          x.innerHTML = "Favourited";
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "/doUnfavourite/" + id,
+        success: (response) => {
+          x.innerHTML = "Favourite";
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    }
+  });
+}
+
+// unfavourite post
+function doUnFav() {
+  $(document).ready(() => {
+    var x = document.getElementById("unfav");
+    const id = x.getAttribute("data-fav");
+    console.log(x.innerHTML);
+    console.log("This is: " + (x.innerHTML === "Favourited"));
+    if (x.innerHTML === "Favourited") {
+      $.ajax({
+        type: "POST",
+        url: "/doUnfavourite/" + id,
+        success: (response) => {
+          x.innerHTML = "Favourite";
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "/doFavourite/" + id,
+        success: (response) => {
+          x.innerHTML = "Favourited";
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    }
+  });
+}
+
+// favourite drink
+function doFavDrink(clicked_id) {
+  $(document).ready(() => {
+    console.log("clicked id: " + clicked_id);
+    var x = document.getElementById(clicked_id);
+    const id = x.getAttribute("data-fav");
+    //console.log("inner html: " + x.innerHTML);
+    console.log("This is: " + (x.getAttribute("title") === "Wishlist"));
+    if (x.getAttribute("title") === "Wishlist") {
+      $.ajax({
+        type: "POST",
+        url: "/drink/favourite/" + id,
+        success: (response) => {
+          x.innerHTML =
+            'Wishlisted <i class="fas fa-heart" style="color: #ec5252;"></i>';
+          $("#" + clicked_id).attr("title", "Unwishlist");
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "/drink/unfavourite/" + id,
+        success: (response) => {
+          x.innerHTML = 'Wishlist <i class="far fa-heart"></i>';
+          $("#" + clicked_id).attr("title", "Wishlist");
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    }
+  });
+}
+
+// unfavourite drink
+function doUnFavDrink(clicked_id) {
+  $(document).ready(() => {
+    console.log("clicked id: " + clicked_id);
+    var x = document.getElementById(clicked_id);
+    const id = x.getAttribute("data-fav");
+    //console.log("inner html: " + x.innerHTML);
+    console.log("This is: " + (x.getAttribute("title") === "Unwishlist"));
+    if (x.getAttribute("title") === "Unwishlist") {
+      $.ajax({
+        type: "POST",
+        url: "/drink/unfavourite/" + id,
+        success: (response) => {
+          x.innerHTML = 'Wishlist <i class="far fa-heart"></i>';
+          $("#" + clicked_id).attr("title", "Wishlist");
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "/drink/favourite/" + id,
+        success: (response) => {
+          x.innerHTML =
+            'Wishlisted <i class="fas fa-heart" style="color: #ec5252;"></i>';
+          $("#" + clicked_id).attr("title", "Unwishlist");
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    }
+  });
+}
+
+// like post
+function doLike(clicked_id) {
+  $(document).ready(() => {
+    console.log(clicked_id);
+    var x = document.getElementById(clicked_id);
+    const id = x.getAttribute("data-like");
+
+    console.log("This is: " + (x.getAttribute("title") === "Like"));
+    if (x.getAttribute("title") === "Like") {
+      $.ajax({
+        type: "POST",
+        url: "/doLike/" + id,
+        success: (response) => {
+          $("#" + clicked_id).css("color", "#03658c");
+          $("#" + clicked_id).attr("title", "Unlike");
+          document.getElementById("count" + clicked_id).innerHTML++;
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "/doUnlike/" + id,
+        success: (response) => {
+          $("#" + clicked_id).css("color", "#a6a6a6");
+          $("#" + clicked_id).attr("title", "Like");
+          document.getElementById("count" + clicked_id).innerHTML--;
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    }
+  });
+}
+
+// unlike post
+function doUnlike(clicked_id) {
+  $(document).ready(() => {
+    console.log(clicked_id);
+    var x = document.getElementById(clicked_id);
+    const id = x.getAttribute("data-like");
+    console.log("This is: " + (x.getAttribute("title") === "Unlike"));
+    if (x.getAttribute("title") === "Unlike") {
+      $.ajax({
+        type: "POST",
+        url: "/doUnlike/" + id,
+        success: (response) => {
+          $("#" + clicked_id).css("color", "#a6a6a6");
+          $("#" + clicked_id).attr("title", "Like");
+          document.getElementById("count" + clicked_id).innerHTML--;
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "/doLike/" + id,
+        success: (response) => {
+          $("#" + clicked_id).css("color", "#03658c");
+          $("#" + clicked_id).attr("title", "Like");
+          document.getElementById("count" + clicked_id).innerHTML++;
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    }
+  });
+}
 
 // ---------- forum table sorting ------------------- //
 
