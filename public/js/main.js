@@ -43,7 +43,7 @@ $(document).ready(() => {
         return confirm("Are you sure?");
       },
       success: (response) => {
-        window.location.href = "/forum";
+        window.location.href = "/forum/1";
       },
       error: (err) => {
         console.log(err);

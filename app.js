@@ -192,34 +192,6 @@ app.get("/login", (req, res) => {
   });
 });
 
-// login "POST" route
-// app.post("/login", (req, res) => {
-//   const user = new User({
-//     username: req.body.username,
-//     password: req.body.password,
-//   });
-
-//   // if no such username -> redirect user to registration page and register
-//   User.findOne({ username: req.body.username }, (err, user) => {
-//     if (user === null) {
-//       req.flash("error", "No such user, please register.");
-//       res.redirect("/register");
-//     }
-//   });
-
-//   req.login(user, (err) => {
-//     if (err) {
-//       console.log(err);
-//       res.redirect("/login");
-//     } else {
-//       passport.authenticate("local")(req, res, () => {
-//         req.flash("message", "Signed in successfully.");
-//         res.redirect("/menu");
-//       });
-//     }
-//   });
-// });
-
 app.post(
   "/login",
   passport.authenticate("local", {
@@ -352,19 +324,29 @@ app.get("/browse/users", (req, res) => {
 /**************  forum page routings **************/
 
 // forum "GET" route
-app.get("/forum", (req, res) => {
+app.get("/forum/:page", (req, res) => {
+  var perPage = 12;
+  var page = req.params.page || 1;
   if (req.isAuthenticated()) {
     //console.log(req.user._id);
-    Post.find({ parentID: null }, (err, posts) => {
-      posts.sort((a, b) => {
-        return b.date - a.date;
+    Post.find({ parentID: null })
+      .skip(perPage * page - perPage)
+      .limit(perPage)
+      .exec((err, posts) => {
+        Post.countDocuments().exec((err, count) => {
+          posts.sort((a, b) => {
+            return b.date - a.date;
+          });
+
+          res.render("forum", {
+            posts: posts,
+            duration: duration,
+            message: req.flash("message"),
+            current: page,
+            pages: Math.ceil(count / perPage),
+          });
+        });
       });
-      res.render("forum", {
-        posts: posts,
-        duration: duration,
-        message: req.flash("message"),
-      });
-    });
   } else {
     req.flash("error", "Please login to view");
     res.redirect("/login");
@@ -448,7 +430,7 @@ app.post("/compose", (req, res) => {
   post.save((err) => {
     if (!err) {
       req.flash("message", "You have created a post");
-      res.redirect("/forum");
+      res.redirect("/forum/1");
     }
   });
 });
@@ -814,7 +796,7 @@ app.post("/post-title-content/edit/:postID", (req, res) => {
       console.log(err);
     } else {
       req.flash("message", "Post edited successfully.");
-      res.redirect("/forum");
+      res.redirect("/forum/1");
     }
   });
 });

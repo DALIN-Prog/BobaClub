@@ -91,6 +91,7 @@
                                 <% if (comment.userID != user._id) { %>
                                 <a href=""><i class="fa fa-reply" title="Reply"></i></a>
                                 <% } %>
+
                                 <!-- If not 'like' yet-> render like -->
                                 <% if (!comment.likers.includes(user._id)) { %>
                                 <i id="<%=comment._id%>" data-like="<%=comment._id%>" class="fa fa-heart" title="Like"
