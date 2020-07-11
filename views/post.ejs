@@ -11,26 +11,38 @@
     <h2><%=post.title%></h2>
 
     <p><%=post.content%></p>
-    <div class="btn-group-sm" role="group" aria-label="Basic example">
-        <!-- If not favourite yet-> render favourite -->
-        <% if (favouritePost === null) { %>
-        <button id="fav" data-fav="<%= post._id %>" class="btn btn-primary" onclick="doFav()">Favourite</button>
-        <% } else { %>
-        <!-- Else -> render unfavourite -->
-        <button id="unfav" data-fav="<%= post._id %>" class="btn btn-primary" onclick="doUnFav()">Favourited</button>
-        <% } %>
 
-        <% if (user._id == post.userID) { %>
-        <!-- Edit button -->
-        <a href="/post-title-content/edit/<%= post._id %>" class="btn btn-primary">Edit Post</a>
-        <!-- Delete button -->
-        <button data-mainPostID="<%=post._id%>" class="btn btn-danger delete-post">Delete Post</button>
-        <% } %>
+    <!-- Likes -->
+    <!-- If not 'like' yet-> render like -->
+    <% if (!post.likers.includes(user._id)) { %>
+    <button id="<%=post._id%>" data-like="<%=post._id%>" class="btn btn-primary" title="Like" onclick="doLike(this.id)">
+        <!-- < if (comment.likers.length) { %> -->
+        <p id="count<%=post._id%>" class="mb-0">
+            Likes <%=post.likers.length%>
+        </p>
+    </button>
 
-        <!-- By User -->
-        <!-- Date -->
-        <!-- Likes -->
-    </div>
+    <!-- Else -> render likes -->
+    <% } else { %>
+    <button id="<%=post._id%>" data-like="<%=post._id%>" class="btn btn-primary" title="Unlike"
+        onclick="doUnlike(this.id)">
+        <!-- < if (comment.likers.length) { %> -->
+        <p id="count<%=post._id%>" class="mb-0">
+            Dislikes<%=post.likers.length%>
+        </p>
+    </button>
+
+    <% } %>
+    <div class="btn-group-sm" role="group" aria-label="Basic example"></div>
+    <% if (user._id == post.userID) { %>
+    <!-- Edit button -->
+    <a href="/post-title-content/edit/<%= post._id %>" class="btn btn-primary">Edit Post</a>
+    <!-- Delete button -->
+    <button data-mainPostID="<%=post._id%>" class="btn btn-danger delete-post">Delete Post</button>
+    <% } %>
+</div>
+<!-- By User -->
+<!-- Date -->
 
 </div>
 
@@ -74,12 +86,15 @@
                         <div class="comment-avatar"><img src=<%=imageSource%> alt=""></div>
                         <div class="comment-box">
                             <div class="comment-head">
+                                <!-- To differentiate OP -->
                                 <% if (comment.userID === post.userID) { %>
                                 <h6 class="comment-name by-author"><%=comment.username%></h6>
                                 <% } else { %>
                                 <h6 class="comment-name"><%=comment.username%></h6>
                                 <% } %>
+                                <!-- Time of comment -->
                                 <span><%= duration(comment) %></span>
+                                <!-- To differentiate owner of comment -->
                                 <% if (comment.userID == user._id) { %>
                                 <a><i data-commentID="<%= comment._id %>" data-postID="<%= comment.parentID %>"
                                         class="fa fa-trash-alt delete-comment" title="Delete"></i></a>
@@ -91,26 +106,28 @@
                                 <% if (comment.userID != user._id) { %>
                                 <a href=""><i class="fa fa-reply" title="Reply"></i></a>
                                 <% } %>
-
+                                <!-- like function -->
                                 <!-- If not 'like' yet-> render like -->
                                 <% if (!comment.likers.includes(user._id)) { %>
                                 <i id="<%=comment._id%>" data-like="<%=comment._id%>" class="fa fa-heart" title="Like"
                                     onclick="doLike(this.id)"></i>
-                                <!-- < if (comment.likers.length) { %> -->
+                                <!-- No. of likes -->
                                 <p id="count<%=comment._id%>" class="mb-0" style="float: right;">
                                     <%=comment.likers.length%></p>
-                                <!-- < } %> -->
-                                <!-- Else -> render likes -->
+
+                                <!-- Else -> render unlike -->
                                 <% } else { %>
                                 <i id="<%=comment._id%>" data-like="<%=comment._id%>" class="fa fa-heart" title="Unlike"
                                     onclick="doUnlike(this.id)" style="color: #03658c;"></i>
                                 <!-- < if (comment.likers.length) { %> -->
+                                <!-- No. of likes -->
                                 <p id="count<%=comment._id%>" class="mb-0" style="float: right;">
                                     <%=comment.likers.length%></p>
                                 <!-- < } %> -->
                                 <% } %>
 
                             </div>
+                            <!-- comment content -->
                             <div class="comment-content">
                                 <p><%=comment.content%></p>
                             </div>

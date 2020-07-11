@@ -160,17 +160,19 @@ const favouriteSchema = new mongoose.Schema({
 const Favourite = new mongoose.model("Favourite", favouriteSchema);
 /**************  Schema(favouriteSchema) setup **************/
 
-/**************  Schema(likeSchema) setup **************/
+/**************  Schema(promoSchema) setup **************/
 
-const likeSchema = new mongoose.Schema({
-  // like schema for post
+const promoSchema = new mongoose.Schema({
+  promoImage: { type: String },
   userID: String,
-  drinkID: String,
-  postID: String,
+  promoName: String,
+  promoDescription: String,
+  date: Number,
 });
 
-const Like = new mongoose.model("Like", likeSchema);
-/**************  Schema(likeSchema) setup **************/
+const Promo = new mongoose.model("Promo", promoSchema);
+
+/**************  Schema(promoSchema) setup **************/
 
 /****************************************  Routings START ****************************************/
 
@@ -403,6 +405,29 @@ app.get("/favourites", (req, res) => {
 
 /**************  favourites routings **************/
 
+/**************  MyShop routings **************/
+
+app.get("/myshop", (req, res) => {
+  if (req.isAuthenticated()) {
+    Drink.find({ userID: req.user._id }, (err, drinks) => {
+      User.findOne({ _id: req.user._id }, (err, shop) => {
+        res.render("shop", {
+          shop: shop,
+          drinks: drinks,
+          user: req.user._id,
+          message: req.flash("message"),
+          status: "drinks",
+        });
+      });
+    });
+  } else {
+    req.flash("error", "Please login to view.");
+    res.redirect("/login");
+  }
+});
+
+/**************  MyShop routings **************/
+
 /**************  compose page routings **************/
 
 // compose "GET" route
@@ -439,17 +464,33 @@ app.post("/compose", (req, res) => {
 
 /**************  upload routings **************/
 
-// upload "GET" route
+// upload(drink) "GET" route
 app.get("/upload", (req, res) => {
   if (req.isAuthenticated()) {
-    res.render("upload", { userID: req.user._id });
+    res.render("upload", {
+      userID: req.user._id,
+      status: "drinks",
+    });
   } else {
     req.flash("error", "Please login to post.");
     res.redirect("/login");
   }
 });
 
-// upload "POST" route
+// upload(promo) "GET" route
+app.get("/uploadPromo", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.render("upload", {
+      userID: req.user._id,
+      status: "promos",
+    });
+  } else {
+    req.flash("error", "Please login to post.");
+    res.redirect("/login");
+  }
+});
+
+// upload(drink) "POST" route
 app.post("/upload", upload.single("drinkIMG"), (req, res) => {
   const drinkImage = req.file.path;
   const shopID = req.user._id;
@@ -472,6 +513,29 @@ app.post("/upload", upload.single("drinkIMG"), (req, res) => {
   });
 });
 
+// upload(promo) "POST" route
+app.post("/uploadPromo", upload.single("drinkIMG"), (req, res) => {
+  const drinkImage = req.file.path;
+  const shopID = req.user._id;
+  const drinkName = req.body.drinkName;
+  const drinkDescription = req.body.drinkDescription;
+
+  const promo = new Promo({
+    promoImage: drinkImage,
+    userID: shopID,
+    promoName: drinkName,
+    promoDescription: drinkDescription,
+    date: Date.now(),
+  });
+
+  promo.save((err) => {
+    if (!err) {
+      req.flash("message", "You have uploaded a Promotion");
+      res.redirect("/promo/" + shopID);
+    }
+  });
+});
+
 /**************  upload routings **************/
 
 /**************  individual shop routings **************/
@@ -479,14 +543,14 @@ app.post("/upload", upload.single("drinkIMG"), (req, res) => {
 // individual shop "GET" route
 app.get("/shops/:shopId", (req, res) => {
   if (req.isAuthenticated()) {
-    const currUser = req.user._id;
     Drink.find({ userID: req.params.shopId }, (err, drinks) => {
       User.findOne({ _id: req.params.shopId }, (err, shop) => {
         res.render("shop", {
           shop: shop,
           drinks: drinks,
-          user: currUser,
+          user: req.user._id,
           message: req.flash("message"),
+          status: "drinks",
         });
       });
     });
@@ -498,9 +562,75 @@ app.get("/shops/:shopId", (req, res) => {
 
 /**************  individual shop routings **************/
 
+/**************  individual shop's promo routings **************/
+
+app.get("/promo/:shopId", (req, res) => {
+  if (req.isAuthenticated()) {
+    User.findOne({ _id: req.params.shopId }, (err, shop) => {
+      Promo.find({ userID: req.params.shopId }, (err, promos) => {
+        res.render("shop", {
+          shop: shop,
+          promos: promos,
+          user: req.user._id,
+          status: "promos",
+          message: req.flash("message"),
+        });
+      });
+    });
+  } else {
+    req.flash("error", "Please login to view.");
+    res.redirect("/login");
+  }
+});
+
+/**************  individual shop's promo routings **************/
+
+/**************  individual promo routings **************/
+
+app.get("/shop/promo/:promoId", (req, res) => {
+  const reqPromoId = req.params.promoId;
+  var comments = [];
+  Post.find({ parentID: reqPromoId }, (err, lst) => {
+    comments = lst;
+  });
+
+  var users = [];
+  User.find({}, (err, lst) => {
+    users = lst;
+  });
+
+  Promo.findOne({ _id: reqPromoId }, (err, promo1) => {
+    res.render("drink", {
+      drink: promo1,
+      comments: comments,
+      duration: duration,
+      user: req.user,
+      status: "promo",
+      users: users,
+      message: req.flash("message"),
+    });
+  });
+});
+
+app.post("/shop/promo/:promoId", (req, res) => {
+  var reply = new Post({
+    username: req.user.username,
+    content: req.body.comment,
+    date: Date.now(),
+    parentID: req.params.promoId,
+    userID: req.user._id,
+    message: req.flash("message"),
+  });
+  reply.save();
+
+  res.redirect("/shop/promo/" + req.params.promoId);
+});
+
+/**************  individual promo routings **************/
+
 /**************  individual drink routings **************/
 
-// indiviudal drink "GET" route
+// individual drink "GET" route
 app.get("/drinks/:drinkId", (req, res) => {
   if (req.isAuthenticated()) {
     const reqDrinkId = req.params.drinkId;
@@ -517,6 +647,7 @@ app.get("/drinks/:drinkId", (req, res) => {
                 duration: duration,
                 user: req.user,
                 users: users,
+                status: "drinks",
                 message: req.flash("message"),
                 favouriteDrink: favouriteDrink,
               });
@@ -711,6 +842,7 @@ app.get("/drink/edit/:drinkID", (req, res) => {
         drinkName: drink.drinkName,
         drinkDescription: drink.drinkDescription,
         shopID: req.user._id,
+        status: "drink",
       });
     });
   } else {
@@ -828,6 +960,71 @@ app.post("/post/comment/edit/:commentID", (req, res) => {
 
 /**************  edit post's comment routings **************/
 
+/**************  edit promo routings **************/
+
+// edit "GET" route
+app.get("/promo/edit/:drinkID", (req, res) => {
+  Promo.findOne({ _id: req.params.drinkID }, (err, drink) => {
+    res.render("edit", {
+      drinkID: drink._id,
+      drinkName: drink.promoName,
+      drinkDescription: drink.promoDescription,
+      status: "promo",
+      shopID: req.user._id,
+    });
+  });
+});
+
+// edit "POST" route
+
+app.post("/promo/edit/:drinkID", upload.single("drinkIMG"), (req, res) => {
+  let drink = {};
+  //console.log(req.user);
+  drink.promoImage = req.file.path;
+  drink.userID = req.user._id;
+  drink.promoName = req.body.drinkName;
+  drink.promoDescription = req.body.drinkDescription;
+  //drink.postedby = req.user.username;
+
+  let query = { _id: req.params.drinkID };
+
+  Promo.updateOne(query, drink, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      req.flash("message", "Edited successfully.");
+      res.redirect("/promo/" + drink.userID);
+    }
+  });
+});
+
+/**************  edit promo routings **************/
+
+/**************  edit promo's comment routings **************/
+
+app.post("/promo/comment/edit/:commentID", (req, res) => {
+  let comment = {};
+
+  comment.content = req.body.editedContent;
+
+  Post.updateOne({ _id: req.params.commentID }, comment, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      Post.findOne({ _id: req.params.commentID }, (err, post) => {
+        if (err) {
+          console.log(err);
+        } else {
+          req.flash("message", "Comment edited");
+          res.redirect("/shop/promo/" + post.parentID);
+        }
+      });
+    }
+  });
+});
+
+/**************  edit promo's comment routings **************/
+
 /**************  delete routings **************/
 
 // Drinks delete
@@ -851,6 +1048,21 @@ app.delete("/forum/posts/:id", (req, res) => {
     _id: req.params.id,
   };
   Post.deleteOne(query, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send("Success");
+    }
+  });
+});
+
+// Promo delete
+app.delete("/shop/promos/:id", (req, res) => {
+  let query = {
+    _id: req.params.id,
+  };
+
+  Promo.deleteOne(query, (err) => {
     if (err) {
       console.log(err);
     } else {
@@ -889,18 +1101,24 @@ app.delete("/drink/comments/:id", (req, res) => {
   });
 });
 
+// Promo comment delete
+app.delete("/promo/comments/:id", (req, res) => {
+  let query = {
+    _id: req.params.id,
+  };
+
+  Post.deleteOne(query, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send("Success");
+    }
+  });
+});
+
 /**************  delete routings **************/
 
 /**************  Misc **************/
-
-function ensureAuthentication(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next;
-  } else {
-    //req.flash()
-    res.redirect("/login");
-  }
-}
 
 // Function to get time elapsed
 function duration(a) {

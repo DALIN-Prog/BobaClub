@@ -7,12 +7,18 @@
 
 <body>
 
-
-
+    <!-- Upload Promos -->
+    <% if (user.equals(shop._id)) { %>
+    <% if (status == "promos") { %>
+    <a type="submit" role="button" href="/uploadPromo" class="btn btn-outline-dark btn-lg btn-block"
+        style="margin: 20px 0 0 0">
+        Add a New Promotion!
+    </a>
+    <% } %>
+    <% } %>
     <main role="main">
 
         <!-- <section id="testimonials">
-
             <div id="testimonial-carousel" class="carousel slide" data-ride="false">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
@@ -36,18 +42,18 @@
                     <span class="carousel-control-next-icon"></span>
                 </a>
             </div>
-
         </section> -->
 
+        <% if (status == "drinks") { %>
         <section class="jumbotron text-center">
             <div class="container">
-                <h1>Promotions</h1>
-                <p class="lead text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <p> <% if (user.equals(shop._id)) { %>
-                    <a href="/login" class="btn btn-lg btn-primary my-2">Visit our site</a>
-                    <% } %>
+                <!-- Shop Name -->
+                <h1><%=shop.username%></h1>
+                <!-- Description -->
+                <p class="lead text-muted"><%=shop.aboutMe%></p>
+                <p><a href="#" class="btn btn-lg btn-primary my-2">Visit Our Site</a></p>
+                <p>
+                    <a href="/promo/<%=shop._id%>" class="btn btn-lg btn-primary my-2">View Promotions</a>
                     <% if (user.equals(shop._id)) { %>
                     <a href="/upload" class="btn btn-lg btn-primary my-2" style="margin: 0 0 0 0">
                         Add a New Drink!
@@ -56,10 +62,15 @@
                 </p>
             </div>
         </section>
+        <% } %>
 
         <div class="album py-5 bg-light">
             <div class="container">
                 <div class="row">
+
+                    <!-- Drinks -->
+                    <% if (status == "drinks") { %>
+
                     <% drinks.forEach(drink => { %>
                     <div class="col-md-4">
                         <div class="card mb-4 shadow-sm">
@@ -100,13 +111,42 @@
                                         </button>
                                         <% } %>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                    <% } %>
 
+                    <!-- Promos -->
+                    <% if (status == "promos") { %>
+                    <% promos.forEach(promo => { %>
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <img src="/<%= promo.promoImage %>" class="card-img-top" alt="brands">
+                            <div class="card-body">
+
+                                <p class="card-text"><%= promo.promoDescription.substring(0,100) + " ... " %></p>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="/shop/promo/<%= promo._id%>"
+                                            class="btn btn-sm btn-outline-secondary">View</a>
+
+                                        <% if (user.equals(promo.userID)) {%>
+                                        <a href="/promo/edit/<%= promo._id %>"
+                                            class="btn btn-sm btn-outline-secondary">Edit</a>
+                                        <a href="#" data-promoID="<%= promo._id %>" data-userID="<%= promo.userID %>"
+                                            class="btn btn-sm btn-outline-secondary delete-promo">Delete</a>
+                                        <% } %>
+                                    </div>
 
                                 </div>
                             </div>
                         </div>
                     </div>
                     <% }) %>
+                    <% } %>
                 </div>
             </div>
         </div>

@@ -29,8 +29,20 @@
   object-fit: cover;
 }
 
+.card-body {
+  width: 100%;
+}
+
 .card-img {
   width: 100%;
   height: 20vw;
   object-fit: cover;
+}
+
+/* style shop description in browse.ejs */
+.shopDescription {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50ch;
 }

@@ -1,25 +1,53 @@
 <%- include('partials/menuheader') %>
 
 <body>
-    <h2 class="post-title">Edit Drink</h2>
+
+    <% if (status == "drink") { %>
+    <h2 class="post-title" style="margin: 16px 0 0 16px">Edit Drink</h2>
+    <% } %>
+    <% if (status == "promo") { %>
+    <h2 class="post-title" style="margin: 16px 0 0 16px">Edit Promo</h2>
+    <% } %>
     <hr>
     <div class="container-fluid">
+
+        <% if (status == "drink") { %>
         <form action="/drink/edit/<%=drinkID%>" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
+            <% } %>
+            <% if (status == "promo") { %>
+            <form action="/promo/edit/<%=drinkID%>" method="POST" enctype="multipart/form-data">
+                <% } %>
 
-                <label for="exampleFormControlFile1">Please attach an image of your drink *</label>
-                <input type="file" class="form-control-file" name="drinkIMG" id="drinkIMG" required>
+                <div class="form-group">
 
-                <label for="exampleFormControlTextarea1"></label>
-                <textarea class="form-control" placeholder="Name of Drink" id="exampleFormControlTextarea1"
-                    name="drinkName" rows="1" required><%=drinkName%></textarea>
-                <label for="exampleFormControlTextarea1"></label>
-                <textarea class="form-control" placeholder="Drink Description" id="exampleFormControlTextarea1"
-                    name="drinkDescription" rows="6" required><%=drinkDescription%></textarea>
-            </div>
-            <a href="/shops/<%= shopID %>" class="btn btn-secondary btn-lg col-lg4">Cancel</a>
-            <button type="submit" class="btn btn-primary btn-lg col-lg4">Post</button>
-        </form>
+                    <label for="exampleFormControlFile1">Please attach an image* </label>
+                    <input type="file" class="form-control-file" name="drinkIMG" id="drinkIMG" required>
+
+                    <label for="exampleFormControlTextarea1"></label>
+                    <% if (status == "drink") { %>
+                    <textarea class="form-control" placeholder="Name of Drink" id="exampleFormControlTextarea1"
+                        name="drinkName" rows="1" required><%=drinkName%></textarea>
+                    <label for="exampleFormControlTextarea1"></label>
+                    <textarea class="form-control" placeholder="Drink Description" id="exampleFormControlTextarea1"
+                        name="drinkDescription" rows="6" required><%=drinkDescription%></textarea>
+                    <% } %>
+                    <% if (status == "promo") { %>
+                    <textarea class="form-control" placeholder="Name of Promotion" id="exampleFormControlTextarea1"
+                        name="drinkName" rows="1" required><%=drinkName%></textarea>
+                    <label for="exampleFormControlTextarea1"></label>
+                    <textarea class="form-control" placeholder="Promotion Description" id="exampleFormControlTextarea1"
+                        name="drinkDescription" rows="6" required><%=drinkDescription%></textarea>
+                    <% } %>
+                </div>
+                <% if (status == "drink") { %>
+                <a href="/shops/<%= shopID %>" class="btn btn-secondary btn-lg col-lg4">Cancel</a>
+                <% } %>
+                <% if (status == "promo") { %>
+                <a href="/promo/<%= shopID %>" class="btn btn-secondary btn-lg col-lg4">Cancel</a>
+                <% } %>
+
+                <button type="submit" class="btn btn-primary btn-lg col-lg4">Post</button>
+            </form>
 
 
 

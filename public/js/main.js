@@ -106,74 +106,130 @@ $(document).ready(() => {
   });
 });
 
-// favourite post
-function doFav() {
-  $(document).ready(() => {
-    var x = document.getElementById("fav");
-    const id = x.getAttribute("data-fav");
-    console.log("This is: " + (x.innerHTML === "Favourite"));
-    if (x.innerHTML === "Favourite") {
-      $.ajax({
-        type: "POST",
-        url: "/doFavourite/" + id,
-        success: (response) => {
-          x.innerHTML = "Favourited";
-          console.log(response);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-    } else {
-      $.ajax({
-        type: "POST",
-        url: "/doUnfavourite/" + id,
-        success: (response) => {
-          x.innerHTML = "Favourite";
-          console.log(response);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-    }
+// for deleting promo
+$(document).ready(() => {
+  $(".delete-promo").on("click", (e) => {
+    $target = $(e.target);
+    const id = $target.attr("data-promoID");
+    const userID = $target.attr("data-userID");
+    $.ajax({
+      type: "DELETE",
+      url: "/shop/promos/" + id,
+      beforeSend: () => {
+        return confirm("Are you sure?");
+      },
+      success: (response) => {
+        //alert("Deleting promo");
+        window.location.href = "/promo/" + userID;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   });
-}
+});
+
+// for deleting promo comment
+$(document).ready(() => {
+  $(".delete-drinkComment").on("click", (e) => {
+    $target = $(e.target);
+    const id = $target.attr("data-drinkCommentID");
+    const userID = $target.attr("data-drinkID");
+    $.ajax({
+      type: "DELETE",
+      url: "/promo/comments/" + id, ///need to change
+      beforeSend: () => {
+        return confirm("Are you sure?");
+      },
+      success: (response) => {
+        // alert("Deleting drink comment");
+        window.location.href = "/shop/promo/" + userID; ///need to change
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  });
+});
+
+// for editing promo comment
+$(document).ready(() => {
+  $(".edit-drinkComment").on("click", (e) => {
+    $target = $(e.target);
+    const id = $target.attr("data-editDrinkID");
+    //console.log(id);
+    $("#popOutFormPromo").attr("action", "/promo/comment/edit/" + id);
+  });
+});
+
+// favourite post
+// function doFav() {
+//   $(document).ready(() => {
+//     var x = document.getElementById("fav");
+//     const id = x.getAttribute("data-fav");
+//     console.log("This is: " + (x.innerHTML === "Favourite"));
+//     if (x.innerHTML === "Favourite") {
+//       $.ajax({
+//         type: "POST",
+//         url: "/doFavourite/" + id,
+//         success: (response) => {
+//           x.innerHTML = "Favourited";
+//           console.log(response);
+//         },
+//         error: (err) => {
+//           console.log(err);
+//         },
+//       });
+//     } else {
+//       $.ajax({
+//         type: "POST",
+//         url: "/doUnfavourite/" + id,
+//         success: (response) => {
+//           x.innerHTML = "Favourite";
+//           console.log(response);
+//         },
+//         error: (err) => {
+//           console.log(err);
+//         },
+//       });
+//     }
+//   });
+// }
 
 // unfavourite post
-function doUnFav() {
-  $(document).ready(() => {
-    var x = document.getElementById("unfav");
-    const id = x.getAttribute("data-fav");
-    console.log(x.innerHTML);
-    console.log("This is: " + (x.innerHTML === "Favourited"));
-    if (x.innerHTML === "Favourited") {
-      $.ajax({
-        type: "POST",
-        url: "/doUnfavourite/" + id,
-        success: (response) => {
-          x.innerHTML = "Favourite";
-          console.log(response);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-    } else {
-      $.ajax({
-        type: "POST",
-        url: "/doFavourite/" + id,
-        success: (response) => {
-          x.innerHTML = "Favourited";
-          console.log(response);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-    }
-  });
-}
+// function doUnFav() {
+//   $(document).ready(() => {
+//     var x = document.getElementById("unfav");
+//     const id = x.getAttribute("data-fav");
+//     console.log(x.innerHTML);
+//     console.log("This is: " + (x.innerHTML === "Favourited"));
+//     if (x.innerHTML === "Favourited") {
+//       $.ajax({
+//         type: "POST",
+//         url: "/doUnfavourite/" + id,
+//         success: (response) => {
+//           x.innerHTML = "Favourite";
+//           console.log(response);
+//         },
+//         error: (err) => {
+//           console.log(err);
+//         },
+//       });
+//     } else {
+//       $.ajax({
+//         type: "POST",
+//         url: "/doFavourite/" + id,
+//         success: (response) => {
+//           x.innerHTML = "Favourited";
+//           console.log(response);
+//         },
+//         error: (err) => {
+//           console.log(err);
+//         },
+//       });
+//     }
+//   });
+// }
 
 // favourite drink
 function doFavDrink(clicked_id) {
