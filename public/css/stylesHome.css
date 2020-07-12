@@ -191,6 +191,13 @@ p {
   text-decoration: none;
 }
 
+.profile-pic {
+  width: 50%;
+  height: auto;
+  /* padding-bottom: 10%; */
+  border-radius: 50%;
+}
+
 .avatar-choose {
   margin-top: 6%;
 }

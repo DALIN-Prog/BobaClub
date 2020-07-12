@@ -22,7 +22,8 @@
                         <%=drink.drinkDescription%>
                     </p>
                     <p class="card-text">Favourited: <%=drink.favouriters.length%> times </p>
-                    <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+                    <p class="card-text"><small class="text-muted">Last updated: <%=user.username%> &nbsp;
+                            <%=duration(drink, "edit")%></small></p>
                     <% } else if (status == "promo") { %>
                     <img src="/<%= drink.promoImage %>" class="card-img" alt="drinkImage">
                 </div>
@@ -34,6 +35,8 @@
                         <p class="card-text">
                             <%=drink.promoDescription%>
                         </p>
+                        <p class="card-text"><small class="text-muted">Last updated: <%=user.username%> &nbsp;
+                                <%=duration(drink, "edit")%></small></p>
                         <% } %>
                     </div>
                 </div>
@@ -45,7 +48,7 @@
 
     <!-- Make a comment for Drink/Promo -->
     <div class="container">
-        <% if (status == "drink") { %>
+        <% if (status == "drinks") { %>
         <form class="compose-form" action="/drinks/<%=drink._id%>" method="post">
             <% } else if (status == "promo") { %>
             <form class="compose-form" action="/shop/promo/<%=drink._id%>" method="post">
@@ -91,7 +94,11 @@
                                     <h6 class="comment-name"><%=comment.username%> </h6>
                                     <% } %>
                                     <!-- Time of comment -->
+                                    <% if (comment.edited) { %>
+                                    <span><%= duration(comment) %> (edited)</span>
+                                    <% } else { %>
                                     <span><%= duration(comment) %></span>
+                                    <% } %>
                                     <!-- To differntiate owner of comment -->
                                     <% if (comment.userID == user._id) { %>
                                     <a href="#"><i href="#" data-drinkCommentID="<%= comment._id %>"
@@ -129,6 +136,10 @@
                         <% }) %>
             </div>
         </div>
+    </div>
+
+    <div class="container mb-4">
+        <a href="/shops/<%=drink.userID%>" type="button" class="btn btn-secondary">Back</a>
     </div>
 
     <!-- Modal (a pop-out box to edit Drink/Promo comment)-->

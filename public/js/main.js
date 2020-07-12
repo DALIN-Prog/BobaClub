@@ -162,83 +162,159 @@ $(document).ready(() => {
   });
 });
 
-// favourite post
-// function doFav() {
-//   $(document).ready(() => {
-//     var x = document.getElementById("fav");
-//     const id = x.getAttribute("data-fav");
-//     console.log("This is: " + (x.innerHTML === "Favourite"));
-//     if (x.innerHTML === "Favourite") {
-//       $.ajax({
-//         type: "POST",
-//         url: "/doFavourite/" + id,
-//         success: (response) => {
-//           x.innerHTML = "Favourited";
-//           console.log(response);
-//         },
-//         error: (err) => {
-//           console.log(err);
-//         },
-//       });
-//     } else {
-//       $.ajax({
-//         type: "POST",
-//         url: "/doUnfavourite/" + id,
-//         success: (response) => {
-//           x.innerHTML = "Favourite";
-//           console.log(response);
-//         },
-//         error: (err) => {
-//           console.log(err);
-//         },
-//       });
-//     }
-//   });
-// }
+// like post
+function likePost(clicked_id) {
+  $(document).ready(() => {
+    //console.log(clicked_id);
+    var x = document.getElementById(clicked_id);
+    var count = document
+      .getElementById("count" + clicked_id)
+      .getAttribute("data-count");
+    const username = document
+      .getElementById("count" + clicked_id)
+      .getAttribute("data-user");
+    const time = document
+      .getElementById("count" + clicked_id)
+      .getAttribute("data-time");
+    const original = document
+      .getElementById("count" + clicked_id)
+      .getAttribute("data-original");
 
-// unfavourite post
-// function doUnFav() {
-//   $(document).ready(() => {
-//     var x = document.getElementById("unfav");
-//     const id = x.getAttribute("data-fav");
-//     console.log(x.innerHTML);
-//     console.log("This is: " + (x.innerHTML === "Favourited"));
-//     if (x.innerHTML === "Favourited") {
-//       $.ajax({
-//         type: "POST",
-//         url: "/doUnfavourite/" + id,
-//         success: (response) => {
-//           x.innerHTML = "Favourite";
-//           console.log(response);
-//         },
-//         error: (err) => {
-//           console.log(err);
-//         },
-//       });
-//     } else {
-//       $.ajax({
-//         type: "POST",
-//         url: "/doFavourite/" + id,
-//         success: (response) => {
-//           x.innerHTML = "Favourited";
-//           console.log(response);
-//         },
-//         error: (err) => {
-//           console.log(err);
-//         },
-//       });
-//     }
-//   });
-// }
+    // console.log("count= " + count);
+    // console.log("username= " + username);
+    // console.log("time= " + time);
+
+    //console.log("This is: " + (x.getAttribute("title") === "Like"));
+    if (x.getAttribute("title") === "Like") {
+      $.ajax({
+        type: "POST",
+        url: "/doLike/" + clicked_id,
+        success: (response) => {
+          x.innerHTML = "Unlike Post";
+          $("#" + clicked_id).attr("title", "Unlike");
+          count++;
+          document.getElementById("count" + clicked_id).innerHTML =
+            "Likes: " +
+            count +
+            "<br>Posted By: " +
+            username +
+            " &nbsp; " +
+            original +
+            "<br>Last Updated: " +
+            time;
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "/doUnlike/" + clicked_id,
+        success: (response) => {
+          x.innerHTML = "Like Post";
+          $("#" + clicked_id).attr("title", "Like");
+          count;
+          document.getElementById("count" + clicked_id).innerHTML =
+            "Likes: " +
+            count +
+            "<br>Posted By: " +
+            username +
+            " &nbsp; " +
+            original +
+            "<br>Last Updated: " +
+            time;
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    }
+  });
+}
+
+// unlike post
+function unlikePost(clicked_id) {
+  $(document).ready(() => {
+    //console.log(clicked_id);
+    var x = document.getElementById(clicked_id);
+    var count = document
+      .getElementById("count" + clicked_id)
+      .getAttribute("data-count");
+    const username = document
+      .getElementById("count" + clicked_id)
+      .getAttribute("data-user");
+    const time = document
+      .getElementById("count" + clicked_id)
+      .getAttribute("data-time");
+    const original = document
+      .getElementById("count" + clicked_id)
+      .getAttribute("data-original");
+
+    // console.log("count= " + count);
+    // console.log("username= " + username);
+    // console.log("time= " + time);
+
+    //console.log("This is: " + (x.getAttribute("title") === "Unlike"));
+    if (x.getAttribute("title") === "Unlike") {
+      $.ajax({
+        type: "POST",
+        url: "/doUnlike/" + clicked_id,
+        success: (response) => {
+          x.innerHTML = "Like Post";
+          $("#" + clicked_id).attr("title", "Like");
+          count--;
+          document.getElementById("count" + clicked_id).innerHTML =
+            "Likes: " +
+            count +
+            "<br>Posted By: " +
+            username +
+            " &nbsp; " +
+            original +
+            "<br>Last Updated: " +
+            time;
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "/doLike/" + clicked_id,
+        success: (response) => {
+          x.innerHTML = "Unlike Post";
+          $("#" + clicked_id).attr("title", "Unlike");
+          document.getElementById("count" + clicked_id).innerHTML =
+            "Likes: " +
+            count +
+            "<br>Posted By: " +
+            username +
+            " &nbsp; " +
+            original +
+            "<br>Last Updated: " +
+            time;
+          console.log(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    }
+  });
+}
 
 // favourite drink
 function doFavDrink(clicked_id) {
   $(document).ready(() => {
-    console.log("clicked id: " + clicked_id);
+    //console.log("clicked id: " + clicked_id);
     var x = document.getElementById(clicked_id);
     const id = x.getAttribute("data-fav");
     //console.log("inner html: " + x.innerHTML);
-    console.log("This is: " + (x.getAttribute("title") === "Wishlist"));
+    //console.log("This is: " + (x.getAttribute("title") === "Wishlist"));
     if (x.getAttribute("title") === "Wishlist") {
       $.ajax({
         type: "POST",
@@ -273,11 +349,11 @@ function doFavDrink(clicked_id) {
 // unfavourite drink
 function doUnFavDrink(clicked_id) {
   $(document).ready(() => {
-    console.log("clicked id: " + clicked_id);
+    //console.log("clicked id: " + clicked_id);
     var x = document.getElementById(clicked_id);
     const id = x.getAttribute("data-fav");
     //console.log("inner html: " + x.innerHTML);
-    console.log("This is: " + (x.getAttribute("title") === "Unwishlist"));
+    //console.log("This is: " + (x.getAttribute("title") === "Unwishlist"));
     if (x.getAttribute("title") === "Unwishlist") {
       $.ajax({
         type: "POST",
@@ -312,11 +388,11 @@ function doUnFavDrink(clicked_id) {
 // like post
 function doLike(clicked_id) {
   $(document).ready(() => {
-    console.log(clicked_id);
+    //console.log(clicked_id);
     var x = document.getElementById(clicked_id);
     const id = x.getAttribute("data-like");
 
-    console.log("This is: " + (x.getAttribute("title") === "Like"));
+    //console.log("This is: " + (x.getAttribute("title") === "Like"));
     if (x.getAttribute("title") === "Like") {
       $.ajax({
         type: "POST",
@@ -352,10 +428,10 @@ function doLike(clicked_id) {
 // unlike post
 function doUnlike(clicked_id) {
   $(document).ready(() => {
-    console.log(clicked_id);
+    //console.log(clicked_id);
     var x = document.getElementById(clicked_id);
     const id = x.getAttribute("data-like");
-    console.log("This is: " + (x.getAttribute("title") === "Unlike"));
+    //console.log("This is: " + (x.getAttribute("title") === "Unlike"));
     if (x.getAttribute("title") === "Unlike") {
       $.ajax({
         type: "POST",

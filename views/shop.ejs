@@ -51,15 +51,19 @@
                 <h1><%=shop.username%></h1>
                 <!-- Description -->
                 <p class="lead text-muted"><%=shop.aboutMe%></p>
-                <p><a href="#" class="btn btn-lg btn-primary my-2">Visit Our Site</a></p>
                 <p>
-                    <a href="/promo/<%=shop._id%>" class="btn btn-lg btn-primary my-2">View Promotions</a>
-                    <% if (user.equals(shop._id)) { %>
-                    <a href="/upload" class="btn btn-lg btn-primary my-2" style="margin: 0 0 0 0">
+                    <a href="/promo/<%=shop._id%>" class="btn btn-outline-dark">View Promotions</a>
+                    <a href="#" class="btn btn-outline-dark">Visit Our Site</a>
+                </p>
+
+                <% if (user.equals(shop._id)) { %>
+                <p>
+                    <a href="/upload" class="btn btn-outline-success" style="margin: 0 0 0 0">
                         Add a New Drink!
                     </a>
-                    <% } %>
                 </p>
+                <% } %>
+
             </div>
         </section>
         <% } %>
@@ -69,7 +73,8 @@
                 <div class="row">
 
                     <!-- Drinks -->
-                    <% if (status == "drinks") { %>
+                    <!-- < if (status == "drinks") { %> -->
+                    <% if (status != "promos") { %>
 
                     <% drinks.forEach(drink => { %>
                     <div class="col-md-4">

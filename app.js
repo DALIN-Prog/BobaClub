@@ -125,6 +125,8 @@ const postSchema = {
   date: Number,
   parentID: String,
   userID: String,
+  editDate: Number,
+  edited: Boolean,
   likers: [{ type: String }],
 };
 
@@ -396,7 +398,21 @@ app.post("/profile/:userId", upload.single("userImage"), (req, res) => {
 
 app.get("/favourites", (req, res) => {
   if (req.isAuthenticated()) {
-    res.render("favourites");
+    Drink.find({}, (err, all) => {
+      drinks = [];
+      all.forEach((drink) => {
+        if (drink.favouriters.includes(req.user._id)) {
+          drinks.push(drink);
+        }
+      });
+      res.render("shop", {
+        shop: req.user,
+        drinks: drinks,
+        user: req.user._id,
+        message: req.flash("message"),
+        status: "favs",
+      });
+    });
   } else {
     req.flash("error", "Please login to view.");
     res.redirect("/login");
@@ -589,25 +605,19 @@ app.get("/promo/:shopId", (req, res) => {
 
 app.get("/shop/promo/:promoId", (req, res) => {
   const reqPromoId = req.params.promoId;
-  var comments = [];
-  Post.find({ parentID: reqPromoId }, (err, lst) => {
-    comments = lst;
-  });
-
-  var users = [];
-  User.find({}, (err, lst) => {
-    users = lst;
-  });
-
-  Promo.findOne({ _id: reqPromoId }, (err, promo1) => {
-    res.render("drink", {
-      drink: promo1,
-      comments: comments,
-      duration: duration,
-      user: req.user,
-      status: "promo",
-      users: users,
-      message: req.flash("message"),
+  Post.find({ parentID: reqPromoId }, (err, comments) => {
+    User.find({}, (err, users) => {
+      Promo.findOne({ _id: reqPromoId }, (err, promo1) => {
+        res.render("drink", {
+          drink: promo1,
+          comments: comments,
+          duration: duration,
+          user: req.user,
+          status: "promo",
+          users: users,
+          message: req.flash("message"),
+        });
+      });
     });
   });
 });
@@ -726,39 +736,6 @@ app.post("/posts/:postId", (req, res) => {
 
 /**************  individual post routings **************/
 
-/**************  post favourite/unfavourite routings **************/
-
-app.post("/doFavourite/:postID", (req, res) => {
-  const userID = req.user._id;
-  const postID = req.params.postID;
-
-  const favourite = new Favourite({
-    userID: userID,
-    postID: postID,
-    //drinkID: KIV
-  });
-  favourite.save((err) => {
-    if (!err) {
-      //req.flash("message", "Added to favourites");
-      res.send("Success");
-    }
-  });
-});
-
-app.post("/doUnfavourite/:postID", (req, res) => {
-  Favourite.deleteOne(
-    { userID: req.user._id, postID: req.params.postID },
-    (err) => {
-      if (!err) {
-        //req.flash("message", "Removed from favourites");
-        res.send("Success");
-      }
-    }
-  );
-});
-
-/**************  post favourite/unfavourite routings **************/
-
 /**************  post like/unlike routings **************/
 
 app.post("/doLike/:postID", (req, res) => {
@@ -806,7 +783,7 @@ app.post("/drink/favourite/:drinkID", (req, res) => {
     { $push: { favouriters: userID } },
     (err, drink) => {
       if (!err) {
-        console.log(drink);
+        //console.log(drink);
         res.send("Success");
       }
     }
@@ -822,7 +799,7 @@ app.post("/drink/unfavourite/:drinkID", (req, res) => {
     { $pull: { favouriters: userID } },
     (err, drink) => {
       if (!err) {
-        console.log(drink);
+        //console.log(drink);
         res.send("Success");
       }
     }
@@ -859,6 +836,7 @@ app.post("/drink/edit/:drinkID", upload.single("drinkIMG"), (req, res) => {
   drink.userID = req.user._id;
   drink.drinkName = req.body.drinkName;
   drink.drinkDescription = req.body.drinkDescription;
+  drink.date = Date.now();
   //drink.postedby = req.user.username;
 
   let query = { _id: req.params.drinkID };
@@ -880,6 +858,8 @@ app.post("/drink/comment/edit/:commentID", (req, res) => {
   let comment = {};
 
   comment.content = req.body.editedContent;
+  comment.edited = true;
+  comment.date = Date.now();
 
   Post.updateOne({ _id: req.params.commentID }, comment, (err) => {
     if (err) {
@@ -921,7 +901,8 @@ app.post("/post-title-content/edit/:postID", (req, res) => {
 
   post.title = req.body.postTitle;
   post.content = req.body.postBody;
-  //post.date = Date.now();
+  post.edited = true;
+  post.editDate = Date.now();
 
   Post.updateOne({ _id: req.params.postID }, post, (err) => {
     if (err) {
@@ -941,6 +922,8 @@ app.post("/post/comment/edit/:commentID", (req, res) => {
   let comment = {};
 
   comment.content = req.body.editedContent;
+  comment.date = Date.now();
+  comment.edited = true;
 
   Post.updateOne({ _id: req.params.commentID }, comment, (err) => {
     if (err) {
@@ -984,6 +967,7 @@ app.post("/promo/edit/:drinkID", upload.single("drinkIMG"), (req, res) => {
   drink.userID = req.user._id;
   drink.promoName = req.body.drinkName;
   drink.promoDescription = req.body.drinkDescription;
+  drink.date = Date.now();
   //drink.postedby = req.user.username;
 
   let query = { _id: req.params.drinkID };
@@ -1006,6 +990,8 @@ app.post("/promo/comment/edit/:commentID", (req, res) => {
   let comment = {};
 
   comment.content = req.body.editedContent;
+  comment.edited = true;
+  comment.date = Date.now();
 
   Post.updateOne({ _id: req.params.commentID }, comment, (err) => {
     if (err) {
@@ -1029,45 +1015,63 @@ app.post("/promo/comment/edit/:commentID", (req, res) => {
 
 // Drinks delete
 app.delete("/shop/drinks/:id", (req, res) => {
-  let query = {
+  let query1 = {
     _id: req.params.id,
   };
 
-  Drink.deleteOne(query, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send("Success");
-    }
+  let query2 = {
+    parentID: req.params.id,
+  };
+
+  Drink.deleteOne(query1, (err) => {
+    Post.deleteMany(query2, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Success");
+      }
+    });
   });
 });
 
 // Post delete
 app.delete("/forum/posts/:id", (req, res) => {
-  let query = {
+  let query1 = {
     _id: req.params.id,
   };
-  Post.deleteOne(query, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send("Success");
-    }
+
+  let query2 = {
+    parentID: req.params.id,
+  };
+
+  Post.deleteOne(query1, (err) => {
+    Post.deleteMany(query2, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Success");
+      }
+    });
   });
 });
 
 // Promo delete
 app.delete("/shop/promos/:id", (req, res) => {
-  let query = {
+  let query1 = {
     _id: req.params.id,
   };
 
-  Promo.deleteOne(query, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send("Success");
-    }
+  let query2 = {
+    parentID: req.params.id,
+  };
+  Promo.deleteOne(query1, (err) => {
+    Post.deleteMany(query2, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Success");
+      }
+    });
   });
 });
 
@@ -1121,8 +1125,13 @@ app.delete("/promo/comments/:id", (req, res) => {
 /**************  Misc **************/
 
 // Function to get time elapsed
-function duration(a) {
+function duration(a, type) {
+  type = type || "normal";
+
   var timeElapsedMilli = Date.now() - a.date;
+  if (type != "normal" && a.editDate != null) {
+    timeElapsedMilli = Date.now() - a.editDate;
+  }
   var minutesElapsed = Math.floor(timeElapsedMilli / (1000 * 60));
   var hoursElapsed = Math.floor(minutesElapsed / 60);
   var daysElapsed = Math.floor(hoursElapsed / 24);

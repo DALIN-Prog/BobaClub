@@ -9,7 +9,8 @@
 
                 <label for="exampleFormControlTextarea1">Title</label>
                 <textarea class="form-control" placeholder="Title" id="exampleFormControlTextarea1" name="postTitle"
-                    rows="1" required></textarea>
+                    rows="1" maxlength="20" onkeyup="" required></textarea>
+
                 <label class="mt-2" for="exampleFormControlTextarea1">Content</label>
                 <textarea class="form-control" placeholder="Content" id="exampleFormControlTextarea1" name="postBody"
                     rows="6" required></textarea>
@@ -17,8 +18,6 @@
             <a href="/forum/1" class="btn btn-secondary btn-lg col-lg4">Cancel</a>
             <button type="submit" class="btn btn-primary btn-lg col-lg4">Publish</button>
         </form>
-
-
 
     </div>
     <%- include('partials/footer') %>

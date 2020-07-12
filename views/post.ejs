@@ -7,42 +7,39 @@
 
 <div class="container post-page">
 
-
+    <!-- Post title -->
     <h2><%=post.title%></h2>
 
+    <!-- Post content -->
     <p><%=post.content%></p>
 
-    <!-- Likes -->
-    <!-- If not 'like' yet-> render like -->
-    <% if (!post.likers.includes(user._id)) { %>
-    <button id="<%=post._id%>" data-like="<%=post._id%>" class="btn btn-primary" title="Like" onclick="doLike(this.id)">
-        <!-- < if (comment.likers.length) { %> -->
-        <p id="count<%=post._id%>" class="mb-0">
-            Likes <%=post.likers.length%>
-        </p>
-    </button>
+    <!-- Likes/User/Date -->
+    <small class="text-muted" id="count<%=post._id%>" data-count="<%=post.likers.length%>"
+        data-user="<%=post.username%>" data-time="<%=duration(post, "edit")%>" data-original="<%=duration(post)%>">
+        Likes: <%=post.likers.length%><br>Posted By: <%=post.username%> &nbsp; <%=duration(post)%><br>Last Updated:
+        <%=duration(post, "edit")%>
+    </small>
+    <p class="mt-2">
+        <!-- Like button -->
+        <!-- If not 'like' yet-> render like -->
+        <% if (!post.likers.includes(user._id)) { %>
+        <button id="<%=post._id%>" class="btn btn-primary btn-sm" title="Like" onclick="likePost(this.id)">Like
+            Post</button>
+        <!-- Else -> render likes -->
+        <% } else { %>
+        <button id="<%=post._id%>" class="btn btn-primary btn-sm" title="Unlike" onclick="unlikePost(this.id)">Unlike
+            Post</button>
+        <% } %>
 
-    <!-- Else -> render likes -->
-    <% } else { %>
-    <button id="<%=post._id%>" data-like="<%=post._id%>" class="btn btn-primary" title="Unlike"
-        onclick="doUnlike(this.id)">
-        <!-- < if (comment.likers.length) { %> -->
-        <p id="count<%=post._id%>" class="mb-0">
-            Dislikes<%=post.likers.length%>
-        </p>
-    </button>
-
-    <% } %>
-    <div class="btn-group-sm" role="group" aria-label="Basic example"></div>
-    <% if (user._id == post.userID) { %>
-    <!-- Edit button -->
-    <a href="/post-title-content/edit/<%= post._id %>" class="btn btn-primary">Edit Post</a>
-    <!-- Delete button -->
-    <button data-mainPostID="<%=post._id%>" class="btn btn-danger delete-post">Delete Post</button>
-    <% } %>
+        <!-- Owner can edit/delete -->
+        <% if (user._id == post.userID) { %>
+        <!-- Edit button -->
+        <a href="/post-title-content/edit/<%= post._id %>" class="btn btn-primary btn-sm">Edit Post</a>
+        <!-- Delete button -->
+        <button data-mainPostID="<%=post._id%>" class="btn btn-danger delete-post btn-sm">Delete Post</button>
+        <% } %>
+    </p>
 </div>
-<!-- By User -->
-<!-- Date -->
 
 </div>
 
@@ -93,7 +90,11 @@
                                 <h6 class="comment-name"><%=comment.username%></h6>
                                 <% } %>
                                 <!-- Time of comment -->
+                                <% if (comment.edited) { %>
+                                <span><%= duration(comment) %> (edited)</span>
+                                <% } else { %>
                                 <span><%= duration(comment) %></span>
+                                <% } %>
                                 <!-- To differentiate owner of comment -->
                                 <% if (comment.userID == user._id) { %>
                                 <a><i data-commentID="<%= comment._id %>" data-postID="<%= comment.parentID %>"
@@ -133,10 +134,13 @@
                             </div>
                         </div>
                     </div>
-
                     <% }) %>
         </div>
     </div>
+</div>
+
+<div class="container mb-4">
+    <a href="/forum/1" type="button" class="btn btn-secondary">Back</a>
 </div>
 
 <!-- Modal -->

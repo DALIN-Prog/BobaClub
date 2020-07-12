@@ -20,6 +20,7 @@
                             <th scope="col">User</th>
                             <th scope="col">Title</th>
                             <th scope="col">Created</th>
+                            <th scope="col">Likes</th>
                             <th scope="col">Link</th>
                         </tr>
                     </thead>
@@ -32,6 +33,7 @@
                             <td>
                                 <h6 class="hiddenThing"><%=post.date%></h6><%=duration(post)%>
                             </td>
+                            <td><%=post.likers.length%></td>
                             <td>
 
                                 <a href="/posts/<%=post._id%>">Read Full Post</a>
@@ -42,6 +44,8 @@
                 </table>
             </div>
         </div>
+
+        <!-- Pagination -->
         <% if (pages > 0) { %>
         <ul class="pagination text-center" style="margin-left: 16px;">
             <% if (current == 1) { %>
