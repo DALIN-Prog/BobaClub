@@ -26,14 +26,14 @@
                     <label for="exampleFormControlTextarea1"></label>
                     <% if (status == "drink") { %>
                     <textarea class="form-control" placeholder="Name of Drink" id="exampleFormControlTextarea1"
-                        name="drinkName" rows="1" required><%=drinkName%></textarea>
+                        name="drinkName" rows="1" maxlength="30" required><%=drinkName%></textarea>
                     <label for="exampleFormControlTextarea1"></label>
                     <textarea class="form-control" placeholder="Drink Description" id="exampleFormControlTextarea1"
                         name="drinkDescription" rows="6" required><%=drinkDescription%></textarea>
                     <% } %>
                     <% if (status == "promo") { %>
-                    <textarea class="form-control" placeholder="Name of Promotion" id="exampleFormControlTextarea1"
-                        name="drinkName" rows="1" required><%=drinkName%></textarea>
+                    <textarea class="form-control" minlength="20" placeholder="Name of Promotion"
+                        id="exampleFormControlTextarea1" name="drinkName" rows="1" required><%=drinkName%></textarea>
                     <label for="exampleFormControlTextarea1"></label>
                     <textarea class="form-control" placeholder="Promotion Description" id="exampleFormControlTextarea1"
                         name="drinkDescription" rows="6" required><%=drinkDescription%></textarea>

@@ -98,6 +98,7 @@ const userSchema = new mongoose.Schema({
   aboutMe: String,
   shopName: String, // Only for official shops else NULL
   userImage: { type: String },
+  url: String,
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -149,18 +150,6 @@ const drinkSchema = new mongoose.Schema({
 const Drink = new mongoose.model("Drink", drinkSchema);
 
 /**************  Schema(drinkSchema) setup **************/
-
-/**************  Schema(favouriteSchema) setup **************/
-
-const favouriteSchema = new mongoose.Schema({
-  // favourite schema for drink
-  userID: String,
-  drinkID: String,
-  postID: String, // Remove
-});
-
-const Favourite = new mongoose.model("Favourite", favouriteSchema);
-/**************  Schema(favouriteSchema) setup **************/
 
 /**************  Schema(promoSchema) setup **************/
 
@@ -245,9 +234,12 @@ app.post("/register", (req, res) => {
 app.get("/menu", (req, res) => {
   if (req.isAuthenticated()) {
     const username = req.user.username;
-    res.render("menu", {
-      currUser: username,
-      message: req.flash("message"),
+    Promo.find({}, (err, promos) => {
+      res.render("menu", {
+        currUser: username,
+        promos: promos,
+        message: req.flash("message"),
+      });
     });
   } else {
     req.flash("error", "Please login to view.");
@@ -261,10 +253,12 @@ app.get("/menu", (req, res) => {
 
 app.get("/browse", (req, res) => {
   //browse all shops
+
   if (req.isAuthenticated()) {
     User.find({}, (err, shops) => {
       res.render("browse", {
         shops: shops,
+        status: "all",
       });
     });
   } else {
@@ -275,32 +269,58 @@ app.get("/browse", (req, res) => {
 
 /**************  browse (all shops) routings **************/
 
-/**************  filter function in browse routings **************/
+/**************  search function in browse routings **************/
 
 app.get("/search", (req, res) => {
   if (req.isAuthenticated()) {
-    User.find({ username: { $regex: req.query.search } }, (err, result) => {
-      // console.log(result);
-      res.render("browse", {
-        shops: result,
+    if (req.query.status == "all") {
+      User.find({ username: { $regex: req.query.search } }, (err, result) => {
+        // console.log(result);
+        res.render("browse", {
+          shops: result,
+          status: "all",
+        });
       });
-    });
+    } else if (req.query.status == "shops") {
+      User.find(
+        { username: { $regex: req.query.search }, shopName: { $ne: null } },
+        (err, result) => {
+          // console.log(result);
+          res.render("browse", {
+            shops: result,
+            status: "shops",
+          });
+        }
+      );
+    } else if (req.query.status == "users") {
+      User.find(
+        { username: { $regex: req.query.search }, shopName: null },
+        (err, result) => {
+          // console.log(result);
+          res.render("browse", {
+            shops: result,
+            status: "users",
+          });
+        }
+      );
+    }
   } else {
     req.flash("error", "Please login to search.");
     res.redirect("/login");
   }
 });
 
-/**************  filter function in browse routings **************/
+/**************  search function in browse routings **************/
 
 /**************  filter function in browse routings **************/
 
 app.get("/browse/establishments", (req, res) => {
   if (req.isAuthenticated()) {
-    User.find({}, (err, shops) => {
+    User.find({ shopName: { $ne: null } }, (err, shops) => {
       // find all establishments
       res.render("browse", {
         shops: shops,
+        status: "shops",
       });
     });
   } else {
@@ -312,9 +332,10 @@ app.get("/browse/establishments", (req, res) => {
 app.get("/browse/users", (req, res) => {
   if (req.isAuthenticated()) {
     // find all users
-    User.find({}, (err, shops) => {
+    User.find({ shopName: null }, (err, shops) => {
       res.render("browse", {
         shops: shops,
+        status: "users",
       });
     });
   } else {
@@ -336,12 +357,9 @@ app.get("/forum/:page", (req, res) => {
     Post.find({ parentID: null })
       .skip(perPage * page - perPage)
       .limit(perPage)
+      .sort({ date: -1 })
       .exec((err, posts) => {
-        Post.countDocuments().exec((err, count) => {
-          posts.sort((a, b) => {
-            return b.date - a.date;
-          });
-
+        Post.countDocuments({ parentID: null }).exec((err, count) => {
           res.render("forum", {
             posts: posts,
             duration: duration,
@@ -393,6 +411,19 @@ app.post("/profile/:userId", upload.single("userImage"), (req, res) => {
 });
 
 /**************  profile routings **************/
+
+/**************  apply routings **************/
+
+app.get("/apply", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.render("apply");
+  } else {
+    req.flash("error", "Please login to view.");
+    res.redirect("/login");
+  }
+});
+
+/**************  apply routings **************/
 
 /**************  favourites routings **************/
 
@@ -648,21 +679,15 @@ app.get("/drinks/:drinkId", (req, res) => {
     Post.find({ parentID: reqDrinkId }, (err, comments) => {
       Drink.findOne({ _id: reqDrinkId }, (err, drink) => {
         User.find({}, (err, users) => {
-          Favourite.findOne(
-            { userID: req.user._id, drinkID: reqDrinkId },
-            (err, favouriteDrink) => {
-              res.render("drink", {
-                drink: drink,
-                comments: comments,
-                duration: duration,
-                user: req.user,
-                users: users,
-                status: "drinks",
-                message: req.flash("message"),
-                favouriteDrink: favouriteDrink,
-              });
-            }
-          );
+          res.render("drink", {
+            drink: drink,
+            comments: comments,
+            duration: duration,
+            user: req.user,
+            users: users,
+            status: "drinks",
+            message: req.flash("message"),
+          });
         });
       });
     });
@@ -695,21 +720,17 @@ app.get("/posts/:postId", (req, res) => {
   if (req.isAuthenticated()) {
     const postId = req.params.postId;
     const userId = req.user._id;
-    const queryfav = { userID: userId, postID: postId };
 
     Post.find({ parentID: postId }, (err, comments) => {
       Post.findOne({ _id: postId }, (err, post) => {
         User.find({}, (err, users) => {
-          Favourite.findOne(queryfav, (err, favouritePost) => {
-            res.render("post", {
-              post: post,
-              comments: comments,
-              duration: duration,
-              user: req.user,
-              users: users,
-              message: req.flash("message"),
-              favouritePost: favouritePost,
-            });
+          res.render("post", {
+            post: post,
+            comments: comments,
+            duration: duration,
+            user: req.user,
+            users: users,
+            message: req.flash("message"),
           });
         });
       });

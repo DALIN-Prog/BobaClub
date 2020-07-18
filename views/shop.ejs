@@ -8,7 +8,7 @@
 <body>
 
     <!-- Upload Promos -->
-    <% if (user.equals(shop._id)) { %>
+    <% if (user.equals(shop._id) && shop.shopName != null) { %>
     <% if (status == "promos") { %>
     <a type="submit" role="button" href="/uploadPromo" class="btn btn-outline-dark btn-lg btn-block"
         style="margin: 20px 0 0 0">
@@ -18,32 +18,6 @@
     <% } %>
     <main role="main">
 
-        <!-- <section id="testimonials">
-            <div id="testimonial-carousel" class="carousel slide" data-ride="false">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <h2 class="testimonial-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod
-                            tempor incididunt.</h2>
-                        <button type="button" class="btn btn-secondary">Learn More</button>
-                    </div>
-                    <div class="carousel-item">
-                        <h2 class="testimonial-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod
-                            tempor incididunt.</h2>
-                        <button type="button" class="btn btn-secondary">Learn More</button>
-                    </div>
-
-                </div>
-                <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </a>
-                <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </a>
-            </div>
-        </section> -->
-
         <% if (status == "drinks") { %>
         <section class="jumbotron text-center">
             <div class="container">
@@ -51,10 +25,12 @@
                 <h1><%=shop.username%></h1>
                 <!-- Description -->
                 <p class="lead text-muted"><%=shop.aboutMe%></p>
+                <% if (shop.shopName != null) { %>
                 <p>
                     <a href="/promo/<%=shop._id%>" class="btn btn-outline-dark">View Promotions</a>
                     <a href="#" class="btn btn-outline-dark">Visit Our Site</a>
                 </p>
+                <% } %>
 
                 <% if (user.equals(shop._id)) { %>
                 <p>
@@ -157,6 +133,7 @@
         </div>
 
     </main>
+
     <!-- Google's Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Self created JS -->

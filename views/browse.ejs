@@ -4,22 +4,12 @@
 
     <main role="main">
 
-        <!-- <section class="jumbotron text-center">
-            <div class="container">
-                <h1>Our Partners</h1>
-                <p class="lead text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua.</p>
-                <p>
-                    <a href="" class="btn btn-lg btn-primary my-2">Establishments</a>
-                    <a href="" class="btn btn-lg btn-primary my-2">Users</a>
-                </p>
-            </div>
-        </section> -->
         <form action="/search" class="bg-light" method="GET">
             <div class="container h-100">
                 <div class="d-flex justify-content-center h-100">
                     <div class="searchbar">
                         <input class="search_input" type="text" name="search" placeholder="Find a Shop...">
+                        <input type="hidden" id="status" name="status" value=<%=status%>>
                         <button type="submit" class="search_icon btn-dark"><i class="fas fa-search"></i></button>
                     </div>
                 </div>
@@ -55,5 +45,8 @@
         </div>
 
     </main>
+
+
+
 
     <%- include('partials/footer') %>
