@@ -70,18 +70,20 @@
 
                                             <% if (user.shopName != null) { %>
                                             <div class="col-lg-12">
-                                                <label class="form-control-label" for="input-url">Shop-URL</label>
-                                                <input type="text" id="input-url" name="lastName"
-                                                    class="form-control form-control-alternative"
-                                                    placeholder="URL of your establishment" value="<%=user.url%>">
+                                                <div class="form-group focused">
+                                                    <label class="form-control-label" for="input-url">Shop-URL</label>
+                                                    <input type="text" id="input-url" name="url"
+                                                        class="form-control form-control-alternative"
+                                                        placeholder="URL of your establishment" value="<%=user.url%>">
+                                                </div>
                                             </div>
                                             <% } %>
 
                                             <div class="col-lg-6">
-                                                <div class="form-group focused mt-4">
+                                                <div class="form-group focused">
                                                     <label class="form-control-label"
                                                         for="input-last-name">User-Status</label>
-                                                    <input type="text" id="input-last-name" name="shopName"
+                                                    <input type="text" id="input-status" name="shopName"
                                                         class="form-control form-control-alternative"
                                                         <% if (user.shopName == null) { %> value="Normal-User"
                                                         <% } else { %> value="Official-Establishment" <% } %> readonly>

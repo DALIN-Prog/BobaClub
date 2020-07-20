@@ -400,6 +400,7 @@ app.post("/profile/:userId", upload.single("userImage"), (req, res) => {
       user.firstName = req.body.firstName;
       user.lastName = req.body.lastName;
       user.aboutMe = req.body.aboutMe;
+      user.url = req.body.url;
       if (!(req.file == null)) {
         user.userImage = req.file.path;
       }
@@ -768,7 +769,7 @@ app.post("/doLike/:postID", (req, res) => {
     { $push: { likers: userID } },
     (err, post) => {
       if (!err) {
-        console.log(post);
+        // console.log(post);
         res.send("Success");
       }
     }
@@ -784,7 +785,7 @@ app.post("/doUnlike/:postID", (req, res) => {
     { $pull: { likers: userID } },
     (err, post) => {
       if (!err) {
-        console.log(post);
+        // console.log(post);
         res.send("Success");
       }
     }

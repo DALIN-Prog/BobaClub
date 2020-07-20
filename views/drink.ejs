@@ -101,9 +101,15 @@
                                     <% } %>
                                     <!-- To differntiate owner of comment -->
                                     <% if (comment.userID == user._id) { %>
+                                    <% if (status == "drinks") { %>
                                     <a href="#"><i href="#" data-drinkCommentID="<%= comment._id %>"
                                             data-drinkID="<%= drink._id %>" class="fa fa-trash-alt delete-drinkComment"
                                             title="Delete"></i></a>
+                                    <% } else { %>
+                                    <a href="#"><i href="#" data-drinkCommentID="<%= comment._id %>"
+                                            data-drinkID="<%= drink._id %>" class="fa fa-trash-alt delete-promoComment"
+                                            title="Delete"></i></a>
+                                    <% } %>
                                     <a><i data-toggle="modal" data-target="#exampleModal"
                                             data-editDrinkID="<%= comment._id %>" class="fa edit-drinkComment fa-edit"
                                             title="Edit"></i></a>
@@ -155,7 +161,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <% if (status == "drink") { %>
+                    <% if (status == "drinks") { %>
                     <form id="popOutFormDrink" action="/drink/comment/edit/" method="POST">
                         <% } %>
                         <% if (status == "promo") { %>

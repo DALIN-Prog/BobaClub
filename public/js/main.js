@@ -131,19 +131,19 @@ $(document).ready(() => {
 
 // for deleting promo comment
 $(document).ready(() => {
-  $(".delete-drinkComment").on("click", (e) => {
+  $(".delete-promoComment").on("click", (e) => {
     $target = $(e.target);
     const id = $target.attr("data-drinkCommentID");
     const userID = $target.attr("data-drinkID");
     $.ajax({
       type: "DELETE",
-      url: "/promo/comments/" + id, ///need to change
+      url: "/promo/comments/" + id,
       beforeSend: () => {
         return confirm("Are you sure?");
       },
       success: (response) => {
         // alert("Deleting drink comment");
-        window.location.href = "/shop/promo/" + userID; ///need to change
+        window.location.href = "/shop/promo/" + userID;
       },
       error: (err) => {
         console.log(err);
