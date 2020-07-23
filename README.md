@@ -59,5 +59,5 @@ http://localhost:3000/
 
 * [ExpressJS](https://expressjs.com/) - The web framework used
 * [Node.js](https://nodejs.org/en/)
-* HTML/CSS/[Bootstrap](https://getbootstrap.com/) - The frontend framework used
+* HTML([EJS](https://ejs.co/))/CSS/[Bootstrap](https://getbootstrap.com/) - The frontend framework used
 * [MongoDB](https://www.mongodb.com/)/[mongoose](https://mongoosejs.com/) - The backend framework used
