@@ -36,28 +36,27 @@ A step by step series of examples that tell you how to get a development env run
 
 2) Change working driectory to the downloaded file <br>
 
-3) Initialise node modules
+3) Start local MongoDB server (refer to MongoDB's documentation) <br>
+
+4) Initialise node modules
 
 ```
 npm install
 ```
 
-4) Launch Google Chrome and proceed to
+5) Launch Google Chrome and proceed to
 ```
 http://localhost:3000/
 ```
 
-## Walkthrough/ Proposal
+## Walkthrough
 
 ### Walkthrough video
-[Walkthrough]() 
-
-### Detailed proposal
-[Proposal]()
+[Walkthrough](https://drive.google.com/file/d/1YTm-HZoafqt87SpxLtpNPsDQokxmLKoa/view?usp=sharing) 
 
 ## Built With
 
 * [ExpressJS](https://expressjs.com/) - The web framework used
 * [Node.js](https://nodejs.org/en/)
 * HTML([EJS](https://ejs.co/))/CSS/[Bootstrap](https://getbootstrap.com/) - The frontend framework used
-* [MongoDB](https://www.mongodb.com/)/[mongoose](https://mongoosejs.com/) - The backend framework used
+* [MongoDB](https://www.mongodb.com/)/[Mongoose](https://mongoosejs.com/) - The backend framework used
